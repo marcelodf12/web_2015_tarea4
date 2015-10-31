@@ -6,8 +6,10 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import py.una.web.tarea4.model.Cliente;
+import py.una.web.tarea4.util.ListaPaginada;
 
 import java.util.ArrayList;
 import java.io.BufferedReader;
@@ -105,12 +107,89 @@ public class ClienteEjb implements ClienteEjbLocal {
 
 	private Boolean persistir(Cliente c) {
 		try {
-			//en ves de persist
+			// en ves de persist
 			em.merge(c);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return false;
 		}
 		return true;
+	}
+	
+	public Boolean persistir(String nombre, String ruc, String direccion) {
+		try {
+			Cliente c = new Cliente(nombre,ruc,direccion); 
+			// en ves de persist
+			em.merge(c);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return false;
+		}
+		return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	public ListaPaginada<Cliente> listar(Integer cantidadPorPagina,
+			Integer pagina, String orderCol, String orderDir, String campo,
+			String filtro) {
+		String query = "SELECT c FROM Cliente c ";
+		String contar = "SELECT COUNT(c.id) FROM Cliente c ";
+		if (filtro != null && campo != null) {
+			query += " WHERE " + campo + " LIKE '%" + filtro + "%'";
+			contar += " WHERE " + campo + " LIKE '%" + filtro + "%'";
+		} else if (filtro != null) {
+			if (filtro.compareTo("") != 0) {
+				String[] campos = { "ruc", "direccion" };
+				query += " WHERE ((nombre LIKE '%" + filtro + "%')";
+				contar += " WHERE ((nombre LIKE '%" + filtro + "%')";
+				for (String c : campos) {
+					query += " OR (" + c + " LIKE '%" + filtro + "%')";
+					contar += " OR (" + c + " LIKE '%" + filtro + "%')";
+				}
+
+			}
+			query += ")";
+			contar += ")";
+		}
+		if (orderDir != null && orderCol != null) {
+			query += " ORDER BY c." + orderCol + " " + orderDir;
+		}
+
+		Query q = em.createQuery(query, Cliente.class);
+		Query q2 = em.createQuery(contar, Long.class);
+
+		q.setFirstResult((pagina - 1) * cantidadPorPagina);
+		q.setMaxResults(cantidadPorPagina);
+
+		ListaPaginada<Cliente> respuesta = (new ListaPaginada<Cliente>());
+		respuesta.setLista((ArrayList<Cliente>) q.getResultList());
+		respuesta.setPaginaActual(pagina);
+
+		Long totalResultados = (Long) q2.getSingleResult();
+		Double div = ((double) totalResultados / (double) cantidadPorPagina);
+		Integer cantPag = div.intValue();
+		if (totalResultados % cantidadPorPagina != 0)
+			cantPag++;
+
+		respuesta.setCantidadDePaginas(cantPag);
+
+		return respuesta;
+	};
+
+	public void eliminar(String ruc){
+		try {
+			Cliente c = em.find(Cliente.class, ruc);
+			em.remove(c);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	public Cliente findById(String ruc){
+		try {
+			return em.find(Cliente.class, ruc);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }

@@ -23,8 +23,85 @@
 	xmlns:p="http://primefaces.org/ui">
 	<ui:define name="content">
 		<h1>Gestión de Clientes</h1>
-		[aca deber ir el listado paginado con componentes de prime face,
-		en cada fila debe haber un boton que al presionar despliegue un menu
-		contextual para editar el elemento]
+
+		<h:form id="form">
+			<p:growl id="growl" showDetail="true" sticky="true" />  
+			<p:commandButton value="Nuevo Cliente" icon="ui-icon-star"
+				onclick="PF('dlg1').show();" />
+			<br />
+			<p:dialog header="Nuevo Cliente" widgetVar="dlg1" minHeight="40">
+				<h:panelGrid columns="1" style="margin-bottom:10px" cellpadding="2"
+					columnClasses="label, value">
+					<h3 style="margin-top: 0">Ingrese los Datos del cliente</h3>
+					<h:outputText value="Nombre" />
+					<p:inputText id="nuevoNombre" value="#{clienteService.nuevoNombre}" />
+					<h:outputText value="RUC" />
+					<p:inputText id="nuevoRuc" value="#{clienteService.nuevoRuc}"/>
+					<h:outputText value="Direccion" />
+					<p:inputText id="nuevaDireccion" value="#{clienteService.nuevaDireccion}" />
+				</h:panelGrid>
+				<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="2"
+					columnClasses="label, value">
+					<p:commandButton value="Guardar" icon="ui-icon-disk" actionListener="#{clienteService.crear()}"  update="form" />
+					<p:commandButton value="Limpiar" icon="ui-icon-delete"
+						update="form" actionListener="#{clienteService.limpiar()}" />
+					<p:commandButton value="Cancelar" icon="ui-icon-close"
+						onclick="PF('dlg1').hide();" />
+				</h:panelGrid>
+			</p:dialog>
+			<p:separator />
+			<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="2"
+				columnClasses="label, value">
+				<p:inputText id="filtroGeneral"
+					value="#{clienteService.filtroGeneral}" />
+				<p:selectOneListbox id="basic" value="#{clienteService.orden}">
+					<f:selectItem itemLabel="Ascendente" itemValue="ASC" />
+					<f:selectItem itemLabel="Descendente" itemValue="DESC" />
+				</p:selectOneListbox>
+				<p:commandButton value="Buscar"
+					actionListener="#{clienteService.primeraPagina()}" id="act"
+					title="Buscar" update="form" />
+				<br />
+			</h:panelGrid>
+			<p:separator />
+			<p:dataTable value="#{clienteService.clientes}" var="cliente">
+				<p:column headerText="Ruc">
+					<h:outputText value="#{cliente.ruc}" />
+				</p:column>
+
+				<p:column headerText="Nombre">
+					<h:outputText value="#{cliente.nombre}" />
+				</p:column>
+
+				<p:column headerText="Direccion">
+					<h:outputText value="#{cliente.direccion}" />
+				</p:column>
+				
+				<p:column headerText="Acciones">
+					<p:commandButton actionListener="#{clienteService.remove(cliente.ruc)}" icon="ui-icon-close" ajax="false" />
+					<p:commandButton actionListener="#{clienteService.edit(cliente.ruc)}" icon="ui-icon-pencil" />
+				</p:column>
+
+			</p:dataTable>
+			<br />
+			<center>
+				<p:commandButton value="Primera"
+					actionListener="#{clienteService.primeraPagina()}" id="pp"
+					title="Ir a la primera página" update="form" />
+				<p:commandButton value="Anterior"
+					actionListener="#{clienteService.anteriorPagina()}" id="pa"
+					title="Página Anterior" update="form" />
+				<h:outputText
+					value=" #{clienteService.paginaActual} / #{clienteService.totalPaginas} "
+					style="font-weight:bold" update="form" />
+				<p:commandButton value="Siguiente"
+					actionListener="#{clienteService.siguientePagina()}" id="ps"
+					title="Siguiente página" update="form" />
+				<p:commandButton value="Ultima"
+					actionListener="#{clienteService.ultimaPagina()}" id="pu"
+					title="Ir a la ultima página" update="form" />
+			</center>
+
+		</h:form>
 	</ui:define>
 </ui:composition>

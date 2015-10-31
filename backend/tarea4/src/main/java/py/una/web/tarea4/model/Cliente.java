@@ -33,6 +33,16 @@ public class Cliente implements Serializable {
 	public Cliente() {
 	}
 
+	
+	public Cliente(String nombre, String ruc, String direccion) {
+		super();
+		this.ruc = ruc;
+		this.direccion = direccion;
+		this.nombre = nombre;
+		this.activo = true;
+	}
+
+
 	public String getRuc() {
 		return this.ruc;
 	}
