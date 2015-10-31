@@ -18,7 +18,6 @@ public class Proveedor implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
 	private String ruc;
 
 	private Boolean activo;
@@ -33,6 +32,17 @@ public class Proveedor implements Serializable {
 
 	public Proveedor() {
 	}
+
+	
+	
+	public Proveedor(String nombre, String ruc, String direccion) {
+		super();
+		this.ruc = ruc;
+		this.direccion = direccion;
+		this.nombre = nombre;
+	}
+
+
 
 	public String getRuc() {
 		return this.ruc;
