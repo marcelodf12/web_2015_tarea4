@@ -15,11 +15,12 @@ import java.util.List;
 @Entity
 @Table(name="productos")
 @NamedQuery(name="Producto.findAll", query="SELECT p FROM Producto p")
+@SequenceGenerator(name="seqProducto", initialValue=100, allocationSize=1, sequenceName="seqProducto")
 public class Producto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seqProducto")
 	private Integer id;
 
 	private Boolean activo;
