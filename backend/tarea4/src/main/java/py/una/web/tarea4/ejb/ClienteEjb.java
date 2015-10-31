@@ -52,12 +52,7 @@ public class ClienteEjb implements ClienteEjbLocal {
 				numeroDeLinea++;
 				String[] element = line.split(splitBy);
 				Cliente clienteNuevo = new Cliente();
-				System.out.println(line);
-				System.out.print(element[0]);
-				System.out.print("--");
-				System.out.print(element[1]);
-				System.out.print("--");
-				System.out.println(element[2]);
+				
 				try {
 					formato = true;
 					if (element[0].compareTo("") != 0

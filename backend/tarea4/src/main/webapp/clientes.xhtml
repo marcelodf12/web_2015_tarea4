@@ -23,12 +23,24 @@
 	xmlns:p="http://primefaces.org/ui">
 	<ui:define name="content">
 		<h1>Gestión de Clientes</h1>
+			<p:dialog header="Carga Masiva" widgetVar="dlg3" minHeight="40">
+				<h:form enctype="multipart/form-data" style="width:500px">
+					<p:messages id="messages" showDetail="true" autoUpdate="false"
+						closable="true" />
 
+					<p:fileUpload value="#{clienteService.file}" mode="advanced"
+						cancelLabel="Cancelar" uploadLabel="Cargar" label="Elegir"
+						fileUploadListener="#{clienteService.fileUploadListener}"></p:fileUpload>
+				</h:form>
+			</p:dialog>
 		<h:form id="form">
-			<p:growl id="growl" showDetail="true" sticky="true" />  
-			<p:commandButton value="Nuevo Cliente" icon="ui-icon-star"
+			<p:growl id="growl" showDetail="true" sticky="true" />
+			<p:commandButton value="Nuevo Cliente" icon="ui-icon-plus"
 				onclick="PF('dlg1').show();" />
+			<p:commandButton value="Carga Masiva" icon="ui-icon-arrowthickstop-1-n"
+				onclick="PF('dlg3').show();" />
 			<br />
+
 			<p:dialog header="Nuevo Cliente" widgetVar="dlg1" minHeight="40">
 				<h:panelGrid columns="1" style="margin-bottom:10px" cellpadding="2"
 					columnClasses="label, value">
@@ -36,13 +48,15 @@
 					<h:outputText value="Nombre" />
 					<p:inputText id="nuevoNombre" value="#{clienteService.nuevoNombre}" />
 					<h:outputText value="RUC" />
-					<p:inputText id="nuevoRuc" value="#{clienteService.nuevoRuc}"/>
+					<p:inputText id="nuevoRuc" value="#{clienteService.nuevoRuc}" />
 					<h:outputText value="Direccion" />
-					<p:inputText id="nuevaDireccion" value="#{clienteService.nuevaDireccion}" />
+					<p:inputText id="nuevaDireccion"
+						value="#{clienteService.nuevaDireccion}" />
 				</h:panelGrid>
 				<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="2"
 					columnClasses="label, value">
-					<p:commandButton value="Guardar" icon="ui-icon-disk" actionListener="#{clienteService.crear()}"  update="form" />
+					<p:commandButton value="Guardar" icon="ui-icon-disk"
+						actionListener="#{clienteService.crear()}" update="form" />
 					<p:commandButton value="Limpiar" icon="ui-icon-delete"
 						update="form" actionListener="#{clienteService.limpiar()}" />
 					<p:commandButton value="Cancelar" icon="ui-icon-close"
@@ -76,10 +90,14 @@
 				<p:column headerText="Direccion">
 					<h:outputText value="#{cliente.direccion}" />
 				</p:column>
-				
+
 				<p:column headerText="Acciones">
-					<p:commandButton actionListener="#{clienteService.remove(cliente.ruc)}" icon="ui-icon-close" ajax="false" />
-					<p:commandButton actionListener="#{clienteService.edit(cliente.ruc)}" icon="ui-icon-pencil" />
+					<p:commandButton
+						actionListener="#{clienteService.remove(cliente.ruc)}"
+						icon="ui-icon-close" ajax="false" />
+					<p:commandButton
+						actionListener="#{clienteService.edit(cliente.ruc)}"
+						icon="ui-icon-pencil" />
 				</p:column>
 
 			</p:dataTable>
