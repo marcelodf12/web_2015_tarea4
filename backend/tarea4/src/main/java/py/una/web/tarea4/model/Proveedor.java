@@ -40,6 +40,7 @@ public class Proveedor implements Serializable {
 		this.ruc = ruc;
 		this.direccion = direccion;
 		this.nombre = nombre;
+		this.activo = true;
 	}
 
 

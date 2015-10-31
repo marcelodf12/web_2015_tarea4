@@ -3,6 +3,7 @@ package py.una.web.tarea4.model;
 import java.io.Serializable;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class Producto implements Serializable {
 
 	private Integer precio;
 
+	@Min(0)
 	private Integer stock;
 
 	//bi-directional many-to-one association to CompraDetalle
@@ -39,6 +41,16 @@ public class Producto implements Serializable {
 
 	public Producto() {
 	}
+
+	
+	public Producto(String nombre, Integer precio) {
+		super();
+		this.nombre = nombre;
+		this.precio = precio;
+		this.stock = 0;
+		this.activo = true;
+	}
+
 
 	public Integer getId() {
 		return this.id;

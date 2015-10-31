@@ -135,8 +135,8 @@ public class ClienteEjb implements ClienteEjbLocal {
 		String query = "SELECT c FROM Cliente c ";
 		String contar = "SELECT COUNT(c.id) FROM Cliente c ";
 		if (filtro != null && campo != null) {
-			query += " WHERE " + campo + " LIKE '%" + filtro + "%'";
-			contar += " WHERE " + campo + " LIKE '%" + filtro + "%'";
+			query += " WHERE " + campo + " LIKE '%" + filtro + "%' AND activo = true";
+			contar += " WHERE " + campo + " LIKE '%" + filtro + "%' AND activo = true";
 		} else if (filtro != null) {
 			if (filtro.compareTo("") != 0) {
 				String[] campos = { "ruc", "direccion" };
@@ -146,11 +146,16 @@ public class ClienteEjb implements ClienteEjbLocal {
 					query += " OR (" + c + " LIKE '%" + filtro + "%')";
 					contar += " OR (" + c + " LIKE '%" + filtro + "%')";
 				}
-
+				query += ") AND activo = true";
+				contar += ") AND activo = true";
+			}else{
+				query += " WHERE activo = true";
+				contar += " WHERE activo = true";
 			}
-			query += ")";
-			contar += ")";
 		}
+		
+		System.out.println(query);
+		
 		if (orderDir != null && orderCol != null) {
 			query += " ORDER BY c." + orderCol + " " + orderDir;
 		}
@@ -179,7 +184,8 @@ public class ClienteEjb implements ClienteEjbLocal {
 	public void eliminar(String ruc){
 		try {
 			Cliente c = em.find(Cliente.class, ruc);
-			em.remove(c);
+			c.setActivo(false);
+			em.merge(c);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
