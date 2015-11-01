@@ -1,0 +1,4 @@
+{"fecha": "2015-02-02",  "cliente":"1",  "nombreCliente":"aaa", "detalles": [{"cantidad": 2, "precio": 100, "producto":2}, {"cantidad": 2, "precio": 100, "producto":2}, {"cantidad":2, "precio": 100, "producto":2}]}
+{"fecha": "2015-02-01",  "cliente":"2",  "nombreCliente":"aaa",  "detalles": [{"cantidad": 4, "precio": 100, "producto":2}, {"cantidad": 2, "precio": 100, "producto":2}, {"cantidad":2, "precio": 100, "producto":2}]}
+{"fecha": "2015-03-01",  "cliente":"3",  "nombreCliente":"aaa",  "detalles": [{"cantidad": 6, "precio": 100, "producto":2}, {"cantidad": 2, "precio": 100, "producto":2}, {"cantidad":2, "precio": 100, "producto":2}]}
+{"fecha": "2015-02-03",  "cliente":"4",  "nombreCliente":"aaa",  "detalles": [{"cantidad": 4, "precio": 100, "producto":2}, {"cantidad": 2, "precio": 100, "producto":2}, {"cantidad":2, "precio": 100, "producto":2}]}
