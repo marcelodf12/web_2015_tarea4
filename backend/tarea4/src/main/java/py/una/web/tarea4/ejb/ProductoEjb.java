@@ -67,7 +67,7 @@ public class ProductoEjb {
 			contar += " WHERE " + campo + " LIKE '%" + filtro + "%' AND activo = true";
 		} else if (filtro != null) {
 			if (filtro.compareTo("") != 0) {
-				String[] campos = { "id", "stock" };
+				//String[] campos = { "id", "stock" };
 				query += " WHERE ((nombre LIKE '%" + filtro + "%')";
 				contar += " WHERE ((nombre LIKE '%" + filtro + "%')";
 				/*

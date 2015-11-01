@@ -33,11 +33,11 @@ public class Producto implements Serializable {
 	private Integer stock;
 
 	//bi-directional many-to-one association to CompraDetalle
-	@OneToMany(mappedBy="producto")
+	@OneToMany(mappedBy="producto", cascade=CascadeType.PERSIST)
 	private List<CompraDetalle> compraDetalles;
 
 	//bi-directional many-to-one association to VentaDetalle
-	@OneToMany(mappedBy="producto")
+	@OneToMany(mappedBy="producto", cascade=CascadeType.PERSIST)
 	private List<VentaDetalle> ventaDetalles;
 
 	public Producto() {

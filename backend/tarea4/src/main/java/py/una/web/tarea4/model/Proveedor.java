@@ -27,7 +27,7 @@ public class Proveedor implements Serializable {
 	private String nombre;
 
 	//bi-directional many-to-one association to Compra
-	@OneToMany(mappedBy="proveedor")
+	@OneToMany(mappedBy="proveedor",cascade=CascadeType.PERSIST)
 	private List<Compra> compras;
 
 	public Proveedor() {

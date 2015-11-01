@@ -12,11 +12,12 @@ import javax.persistence.*;
 @Entity
 @Table(name="compra_detalle")
 @NamedQuery(name="CompraDetalle.findAll", query="SELECT c FROM CompraDetalle c")
+@SequenceGenerator(name="seqCompraDetalle", initialValue=100, allocationSize=1, sequenceName="seqCompraDetalle")
 public class CompraDetalle implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seqCompraDetalle")
 	private Integer id;
 
 	private Integer cantidad;
@@ -35,6 +36,17 @@ public class CompraDetalle implements Serializable {
 
 	public CompraDetalle() {
 	}
+
+	
+	
+	public CompraDetalle(Integer cantidad, Integer precio, Producto producto) {
+		super();
+		this.cantidad = cantidad;
+		this.precio = precio;
+		this.producto = producto;
+	}
+
+
 
 	public Integer getId() {
 		return this.id;

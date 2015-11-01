@@ -172,8 +172,11 @@
 			<version>3.3.2</version>
 			<type>jar</type>
 		</dependency>
-
-
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.3.1</version>
+		</dependency>
 
 
 		<!-- Annotation processor to generate the JPA 2.0 metamodel classes for 

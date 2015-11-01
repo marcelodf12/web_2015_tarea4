@@ -4,40 +4,51 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
 
 /**
  * The persistent class for the compras database table.
  * 
  */
 @Entity
-@Table(name="compras")
-@NamedQuery(name="Compra.findAll", query="SELECT c FROM Compra c")
+@Table(name = "compras")
+@NamedQuery(name = "Compra.findAll", query = "SELECT c FROM Compra c")
+@SequenceGenerator(name="seqCompra", initialValue=100, allocationSize=1, sequenceName="seqCompra")
 public class Compra implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seqCompra")
 	private Integer id;
 
 	@Temporal(TemporalType.DATE)
 	private Date fecha;
 
-	@Column(name="monto_total")
+	@Column(name = "monto_total")
 	private Integer montoTotal;
 
-	//bi-directional many-to-one association to CompraDetalle
-	@OneToMany(mappedBy="compra")
+	// bi-directional many-to-one association to CompraDetalle
+	@OneToMany(mappedBy = "compra", cascade=CascadeType.PERSIST)
 	private List<CompraDetalle> compraDetalles;
 
-	//bi-directional many-to-one association to Proveedore
+	// bi-directional many-to-one association to Proveedores
 	@ManyToOne
-	@JoinColumn(name="ruc_proveedor")
+	@JoinColumn(name = "ruc_proveedor")
 	private Proveedor proveedor;
 
 	public Compra() {
+	}
+
+	public void edit(String fecha, Integer montoTotal,
+			List<CompraDetalle> compraDetalles, Proveedor proveedor) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		this.fecha = sdf.parse(fecha);
+		this.montoTotal = montoTotal;
+		this.compraDetalles = compraDetalles;
+		this.proveedor = proveedor;
 	}
 
 	public Integer getId() {
