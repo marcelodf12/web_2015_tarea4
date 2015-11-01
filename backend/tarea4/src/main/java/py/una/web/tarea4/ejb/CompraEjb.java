@@ -76,6 +76,7 @@ public class CompraEjb {
 						nuevoDetalle.setCompra(compra);
 						detalles.add(nuevoDetalle);
 						montoTotal+=d.getPrecio()*d.getCantidad();
+						em.persist(nuevoDetalle);
 					}
 					compra.edit(nuevaCompra.getFecha(), montoTotal, detalles, proveedor);
 					em.persist(compra);

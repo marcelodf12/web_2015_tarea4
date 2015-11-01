@@ -1,16 +1,22 @@
 package py.una.web.tarea4.model;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,6 +29,7 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="ventas")
 @NamedQuery(name="Venta.findAll", query="SELECT v FROM Venta v")
+@SequenceGenerator(name="seqVenta", initialValue=100, allocationSize=1, sequenceName="seqVenta")
 public class Venta implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -36,6 +43,7 @@ public class Venta implements Serializable {
 	private String nombreCliente;
 
 	@Id
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seqVenta")
 	private Integer numero;
 
 	//bi-directional many-to-one association to Cliente
@@ -48,7 +56,7 @@ public class Venta implements Serializable {
 	@JoinColumn(name="id_factura")
 	private Factura factura;
 	
-	@OneToMany(mappedBy="venta")
+	@OneToMany(mappedBy="venta", cascade=CascadeType.PERSIST)
 	private List<VentaDetalle> ventaDetalles;
 
 	public Venta() {
@@ -108,6 +116,17 @@ public class Venta implements Serializable {
 
 	public void setVentaDetalles(List<VentaDetalle> ventaDetalles) {
 		this.ventaDetalles = ventaDetalles;
+	}
+
+	public void edit(String fecha, Integer montoTotal,
+			List<VentaDetalle> detalles, Cliente cliente) throws ParseException {
+		this.montoTotal = montoTotal;
+		this.cliente = cliente;
+		this.setVentaDetalles(ventaDetalles);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		this.fecha = sdf.parse(fecha);
+		
+		
 	}
 
 }

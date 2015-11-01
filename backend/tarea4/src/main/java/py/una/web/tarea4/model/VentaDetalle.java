@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
@@ -20,11 +21,12 @@ import javax.persistence.Table;
 @Entity
 @Table(name="venta_detalle")
 @NamedQuery(name="VentaDetalle.findAll", query="SELECT v FROM VentaDetalle v")
+@SequenceGenerator(name="seqVentaDetalle", initialValue=100, allocationSize=1, sequenceName="seqVentaDetalle")
 public class VentaDetalle implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seqVentaDetalle")
 	private Integer id;
 
 	private Integer cantidad;
@@ -44,6 +46,13 @@ public class VentaDetalle implements Serializable {
 	private Venta venta;
 
 	public VentaDetalle() {
+	}
+
+	public VentaDetalle(Integer cantidad, Integer precio, Producto p) {
+		super();
+		this.cantidad = cantidad;
+		this.precio = precio;
+		this.setProducto(producto);
 	}
 
 	public Integer getId() {

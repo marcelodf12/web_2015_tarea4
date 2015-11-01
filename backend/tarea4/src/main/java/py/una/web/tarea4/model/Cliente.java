@@ -27,7 +27,7 @@ public class Cliente implements Serializable {
 	private String nombre;
 
 	//bi-directional many-to-one association to Venta
-	@OneToMany(mappedBy="cliente")
+	@OneToMany(mappedBy="cliente" , cascade=CascadeType.PERSIST)
 	private List<Venta> ventas;
 
 	public Cliente() {
