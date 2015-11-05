@@ -38,17 +38,17 @@ INSERT INTO proveedores(ruc, activo, direccion, nombre) VALUES ('7', true, 'dire
 INSERT INTO proveedores(ruc, activo, direccion, nombre) VALUES ('8', true, 'direccion 8', 'proveedor 8');
 INSERT INTO proveedores(ruc, activo, direccion, nombre) VALUES ('9', true, 'direccion 9', 'proveedor 9');
 
-INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (1, true, 'Producto 1', 100, 10);
-INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (2, true, 'Producto 2', 200, 20);
-INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (3, true, 'Producto 3', 300, 30);
-INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (4, true, 'Producto 4', 400, 40);
-INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (5, true, 'Producto 5', 500, 50);
-INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (6, true, 'Producto 6', 600, 60);
-INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (7, true, 'Producto 7', 700, 70);
-INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (8, true, 'Producto 8', 800, 80);
-INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (9, true, 'Producto 9', 900, 90);
-INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (10, true, 'Producto 10', 1000, 5);
-INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (11, true, 'Producto 11', 1100, 8);
+INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (1, true, 'Producto 1', 100, 100);
+INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (2, true, 'Producto 2', 200, 200);
+INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (3, true, 'Producto 3', 300, 300);
+INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (4, true, 'Producto 4', 400, 400);
+INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (5, true, 'Producto 5', 500, 500);
+INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (6, true, 'Producto 6', 600, 600);
+INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (7, true, 'Producto 7', 700, 700);
+INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (8, true, 'Producto 8', 800, 800);
+INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (9, true, 'Producto 9', 900, 900);
+INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (10, true, 'Producto 10', 1000, 50);
+INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (11, true, 'Producto 11', 1100, 80);
 
 INSERT INTO compras(id, fecha, monto_total, ruc_proveedor) VALUES (1, '2015/10/20', 14400, 1);
 INSERT INTO compras(id, fecha, monto_total, ruc_proveedor) VALUES (2, '2015/10/21', 14400, 2);
@@ -74,8 +74,8 @@ INSERT INTO ventas(numero, fecha, monto_total, nombre_cliente, ruc_cliente, id_f
 INSERT INTO ventas(numero, fecha, monto_total, nombre_cliente, ruc_cliente, id_factura) VALUES (2, '2015/10/20', 2, 'Lo que sea', '1', 2);
 
 
-INSERT INTO venta_detalle(id, cantidad, id_venta, precio, id_producto, numero) VALUES (1, 1, 1, 1, 1, 1);
-INSERT INTO venta_detalle(id, cantidad, id_venta, precio, id_producto, numero) VALUES (2, 1, 1, 1, 1, 1);
-INSERT INTO venta_detalle(id, cantidad, id_venta, precio, id_producto, numero) VALUES (3, 1, 2, 2, 2, 2);
+INSERT INTO venta_detalle(id, cantidad, id_venta, precio, id_producto) VALUES (1, 1, 1, 1, 1);
+INSERT INTO venta_detalle(id, cantidad, id_venta, precio, id_producto) VALUES (2, 1, 1, 1, 1);
+INSERT INTO venta_detalle(id, cantidad, id_venta, precio, id_producto) VALUES (3, 1, 2, 2, 2);
 
 

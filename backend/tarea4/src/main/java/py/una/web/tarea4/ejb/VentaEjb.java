@@ -18,11 +18,11 @@ import javax.persistence.Query;
 
 import com.google.gson.Gson;
 
-import py.una.web.tarea4.dto.VentaDTO;
 import py.una.web.tarea4.model.Producto;
 import py.una.web.tarea4.model.Cliente;
 import py.una.web.tarea4.model.Venta;
 import py.una.web.tarea4.model.VentaDetalle;
+import py.una.web.tarea4.util.ListaPaginada;
 import py.una.web.tarea4.util.VentaDetalleJson;
 import py.una.web.tarea4.util.VentaJson;
 
@@ -49,45 +49,55 @@ public class VentaEjb {
 	@Resource
 	private SessionContext context;
 
-	public List<VentaDTO> listar(Integer inicio, Integer cantidad,
-			String orderBy, String orderDir, String campoBusqueda,
-			String busqueda) throws Exception {
-		try {
-			String consulta = "SELECT NUMERO, MONTO_TOTAL, NOMBRE_CLIENTE, RUC_CLIENTE, FECHA, ID_FACTURA FROM VENTAS ";
-			if (campoBusqueda != null) {
-				consulta += "WHERE ";
-				if (campoBusqueda.compareTo("by_all_attributes") == 0) {
-					consulta += "CAST (NUMERO AS TEXT) LIKE '" + busqueda
-							+ "%' OR ";
-					consulta += "CAST (MONTO_TOTAL AS TEXT) LIKE '" + busqueda
-							+ "%' OR ";
-					consulta += "NOMBRE_CLIENTE LIKE '" + busqueda + "%' OR ";
-					consulta += "RUC_CLIENTE LIKE '" + busqueda + "%' OR ";
-					consulta += "CAST (FECHA AS TEXT) LIKE '" + busqueda
-							+ "%' ";
-				} else {
-					consulta += "CAST (" + campoBusqueda + " AS TEXT) LIKE '"
-							+ busqueda + "%' ";
+	public ListaPaginada<Venta> listar(Integer cantidadPorPagina,
+			Integer pagina, String orderCol, String orderDir, String campo,
+			String filtro) {
+		if (campo != null)
+			campo = "c." + campo + ".toString()";
+		String query = "SELECT c FROM Venta c ";
+		String contar = "SELECT COUNT(c.id) FROM Venta c ";
+		if (filtro != null && campo != null) {
+			query += " WHERE " + campo + " LIKE '%" + filtro + "%'";
+			contar += " WHERE " + campo + " LIKE '%" + filtro + "%'";
+		} else if (filtro != null) {
+			if (filtro.compareTo("") != 0) {
+				String[] campos = { "c.montoTotal" };
+				query += " WHERE ((c.id = " + filtro + ")";
+				contar += " WHERE ((c.id = " + filtro + ")";
+				for (String c : campos) {
+					query += " OR (" + c + " = " + filtro + ")";
+					contar += " OR (" + c + " = " + filtro + ")";
 				}
+				query += ") ";
+				contar += ") ";
 			}
-			if (orderBy != null) {
-				consulta += " ORDER BY " + orderBy + " " + orderDir + " ";
-			}
-			Query q = em.createNativeQuery(consulta, Venta.class);
-			q.setFirstResult(inicio);
-			q.setMaxResults(cantidad);
-			@SuppressWarnings("unchecked")
-			List<Venta> lista = (List<Venta>) q.getResultList();
-			List<VentaDTO> ret = new ArrayList<VentaDTO>();
-			for (Venta v : lista) {
-				ret.add(new VentaDTO(v));
-			}
-			return ret;
-		} catch (Exception e) {
-			context.setRollbackOnly();
-			throw new Exception(e.getMessage());
 		}
 
+		System.out.println(query);
+
+		if (orderDir != null && orderCol != null) {
+			query += " ORDER BY c." + orderCol + " " + orderDir;
+		}
+
+		Query q = em.createQuery(query, Venta.class);
+		Query q2 = em.createQuery(contar, Long.class);
+
+		q.setFirstResult((pagina - 1) * cantidadPorPagina);
+		q.setMaxResults(cantidadPorPagina);
+
+		ListaPaginada<Venta> respuesta = (new ListaPaginada<Venta>());
+		respuesta.setLista((ArrayList<Venta>) q.getResultList());
+		respuesta.setPaginaActual(pagina);
+
+		Long totalResultados = (Long) q2.getSingleResult();
+		Double div = ((double) totalResultados / (double) cantidadPorPagina);
+		Integer cantPag = div.intValue();
+		if (totalResultados % cantidadPorPagina != 0)
+			cantPag++;
+
+		respuesta.setCantidadDePaginas(cantPag);
+
+		return respuesta;
 	}
 
 	public Integer total(String campoBusqueda, String busqueda)

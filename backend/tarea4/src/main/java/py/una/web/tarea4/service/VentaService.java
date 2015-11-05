@@ -26,6 +26,7 @@ import py.una.web.tarea4.ejb.VentaEjb;
 import py.una.web.tarea4.model.Producto;
 import py.una.web.tarea4.model.Venta;
 import py.una.web.tarea4.model.VentaDetalle;
+import py.una.web.tarea4.util.ListaPaginada;
 
 @ManagedBean(name = "ventaService")
 @ViewScoped
@@ -35,10 +36,10 @@ public class VentaService {
 
 	@Inject
 	ProductoEjb productoEjb;
-	
+
 	@Inject
 	ClienteEjb clienteEjb;
-	
+
 	private String rucCliente;
 
 	private Integer nuevoIdProducto;
@@ -48,6 +49,31 @@ public class VentaService {
 	private Integer nuevoPrecio;
 
 	private Venta nuevaVenta;
+
+	private Integer paginaActual = 1;
+
+	private Integer cantidadPorPagina = 5;
+
+	private String filtroGeneral;
+
+	private String orden = "ASC";
+
+	private Integer totalPaginas;
+
+	public List<Venta> getVentas() {
+		try {
+			if (filtroGeneral == null)
+				filtroGeneral = "";
+			ListaPaginada<Venta> l = ventaEjb.listar(5, paginaActual, "fecha",
+					orden, null, filtroGeneral);
+			totalPaginas = l.getCantidadDePaginas();
+			return l.getLista();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public void agregar() {
 		System.out.println("Agregar nuevo detalle");
@@ -67,15 +93,15 @@ public class VentaService {
 			System.out.println("No se encontro el producto");
 		}
 		RequestContext context = RequestContext.getCurrentInstance();
-    	context.execute("PF('dlg1').show();");
-    	context.update("form");
+		context.execute("PF('dlg1').show();");
+		context.update("form");
 	}
-	
-	public void remove(VentaDetalle d){
+
+	public void remove(VentaDetalle d) {
 		nuevaVenta.getVentaDetalles().remove(d);
 		RequestContext context = RequestContext.getCurrentInstance();
-    	context.execute("PF('dlg1').show();");
-    	context.update("form");
+		context.execute("PF('dlg1').show();");
+		context.update("form");
 	}
 
 	public void guardarVenta() {
@@ -83,8 +109,9 @@ public class VentaService {
 			if (nuevaVenta.getVentaDetalles().size() > 0) {
 				nuevaVenta.setCliente(clienteEjb.findById(rucCliente));
 				nuevaVenta.setMontoTotal(0);
-				for(VentaDetalle c: nuevaVenta.getVentaDetalles()){
-					nuevaVenta.setMontoTotal(nuevaVenta.getMontoTotal() + c.getCantidad()*c.getPrecio());
+				for (VentaDetalle c : nuevaVenta.getVentaDetalles()) {
+					nuevaVenta.setMontoTotal(nuevaVenta.getMontoTotal()
+							+ c.getCantidad() * c.getPrecio());
 				}
 				nuevaVenta.setFecha(new Date());
 				ventaEjb.nuevaVenta(nuevaVenta);
@@ -105,11 +132,7 @@ public class VentaService {
 		}
 		return nuevaVenta.getVentaDetalles();
 	}
-	
-	
-	
-	
-	
+
 	public String getRucCliente() {
 		return rucCliente;
 	}
@@ -150,9 +173,25 @@ public class VentaService {
 		this.nuevaVenta = nuevaVenta;
 	}
 
+	public void primeraPagina() {
+		paginaActual = 1;
+	}
 
+	public void ultimaPagina() {
+		paginaActual = totalPaginas;
+	}
 
+	public void siguientePagina() {
+		if (this.getPaginaActual() < this.getTotalPaginas()) {
+			paginaActual++;
+		}
+	}
 
+	public void anteriorPagina() {
+		if (getPaginaActual() > 1) {
+			paginaActual += -1;
+		}
+	}
 
 	private UploadedFile file;
 
@@ -183,9 +222,10 @@ public class VentaService {
 		try {
 			File fichero = new File(direccion);
 			if (fichero.delete())
-				   System.out.println("El fichero ha sido borrado satisfactoriamente");
-				else
-				   System.out.println("El fichero no puede ser borrado");
+				System.out
+						.println("El fichero ha sido borrado satisfactoriamente");
+			else
+				System.out.println("El fichero no puede ser borrado");
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -208,34 +248,74 @@ public class VentaService {
 			System.out.println("Archivo Creado!");
 
 			ArrayList<Integer> errores = ventaEjb.cargaMasiva(direccion);
-			
+
 			String summary;
 			String mensaje;
 			Severity s;
-			
 
-			if(errores.size() == 0){
+			if (errores.size() == 0) {
 				summary = "Exito";
 				mensaje = "Se subio correctamente el archivo";
-				s=FacesMessage.SEVERITY_INFO;
-			}else{
+				s = FacesMessage.SEVERITY_INFO;
+			} else {
 				mensaje = "Hubo errores en las lineas: ";
-				for(Integer i:errores)
-					mensaje+=i.toString() + ", ";
+				for (Integer i : errores)
+					mensaje += i.toString() + ", ";
 				summary = "Error";
-				s=FacesMessage.SEVERITY_ERROR;
+				s = FacesMessage.SEVERITY_ERROR;
 			}
-			
-			FacesMessage message = new FacesMessage(s,summary,mensaje);
+
+			FacesMessage message = new FacesMessage(s, summary, mensaje);
 			FacesContext.getCurrentInstance().addMessage("messages", message);
 			RequestContext context = RequestContext.getCurrentInstance();
 			context.execute("PF('dlg3').hide();");
 			context.update("form");
-			
+
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
 	}
 
+	public Integer getPaginaActual() {
+		return paginaActual;
+	}
+
+	public Integer getCantidadPorPagina() {
+		return cantidadPorPagina;
+	}
+
+	public String getFiltroGeneral() {
+		return filtroGeneral;
+	}
+
+	public String getOrden() {
+		return orden;
+	}
+
+	public Integer getTotalPaginas() {
+		return totalPaginas;
+	}
+
+	public void setPaginaActual(Integer paginaActual) {
+		this.paginaActual = paginaActual;
+	}
+
+	public void setCantidadPorPagina(Integer cantidadPorPagina) {
+		this.cantidadPorPagina = cantidadPorPagina;
+	}
+
+	public void setFiltroGeneral(String filtroGeneral) {
+		this.filtroGeneral = filtroGeneral;
+	}
+
+	public void setOrden(String orden) {
+		this.orden = orden;
+	}
+
+	public void setTotalPaginas(Integer totalPaginas) {
+		this.totalPaginas = totalPaginas;
+	}
+	
+	
 
 }

@@ -22,7 +22,7 @@
 	template="/WEB-INF/templates/default.xhtml"
 	xmlns:p="http://primefaces.org/ui">
 	<ui:define name="content">
-		<h1>Gestión de ventas</h1>
+		<h1>Gestión de Ventas</h1>
 		<p:dialog header="Carga Masiva" widgetVar="dlg3" minHeight="40">
 			<h:form enctype="multipart/form-data" style="width:500px">
 				<p:messages id="messages" showDetail="true" autoUpdate="false"
@@ -37,13 +37,61 @@
 			<p:growl id="growl" showDetail="true" sticky="true" />
 			<p:commandButton value="Carga Masiva"
 				icon="ui-icon-arrowthickstop-1-n" onclick="PF('dlg3').show();" />
-				
-			<p:commandButton value="Nueva Venta" icon="ui-icon-plus" onclick="PF('dlg1').show();" />
-			
+			<p:commandButton value="Nueva Venta" icon="ui-icon-plus"
+				onclick="PF('dlg1').show();" />
+			<p:separator />
+			<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="2"
+				columnClasses="label, value">
+				<p:inputText id="filtroGeneral"
+					value="#{ventaService.filtroGeneral}" />
+				<p:selectOneListbox id="basic" value="#{ventaService.orden}">
+					<f:selectItem itemLabel="Ascendente" itemValue="ASC" />
+					<f:selectItem itemLabel="Descendente" itemValue="DESC" />
+				</p:selectOneListbox>
+				<p:commandButton value="Buscar"
+					actionListener="#{ventaService.primeraPagina()}" id="act"
+					title="Buscar" update="form" />
+				<br />
+			</h:panelGrid>		
+			<p:separator />
+			<p:dataTable value="#{ventaService.ventas}" var="venta">
+				<p:column headerText="Id">
+					<h:outputText value="#{venta.numero}" />
+				</p:column>
+
+				<p:column headerText="Fecha">
+					<h:outputText value="#{venta.fecha}" />
+				</p:column>
+
+				<p:column headerText="Monto Total">
+					<h:outputText value="#{venta.montoTotal}" />
+				</p:column>
+
+			</p:dataTable>
+			<br />
+			<center>
+				<p:commandButton value="Primera"
+					actionListener="#{ventaService.primeraPagina()}" id="pp"
+					title="Ir a la primera página" update="form" />
+				<p:commandButton value="Anterior"
+					actionListener="#{ventaService.anteriorPagina()}" id="pa"
+					title="Página Anterior" update="form" />
+				<h:outputText
+					value=" #{ventaService.paginaActual} / #{ventaService.totalPaginas} "
+					style="font-weight:bold" update="form" />
+				<p:commandButton value="Siguiente"
+					actionListener="#{ventaService.siguientePagina()}" id="ps"
+					title="Siguiente página" update="form" />
+				<p:commandButton value="Ultima"
+					actionListener="#{ventaService.ultimaPagina()}" id="pu"
+					title="Ir a la ultima página" update="form" />
+			</center>
+
+
 			<p:dialog header="Nueva Venta" widgetVar="dlg1" minHeight="40">
 				<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="2">
-					<h:outputText value="Proveedor" />
-					<p:inputText id="rucProveedor"
+					<h:outputText value="Cliente" />
+					<p:inputText id="rucCliente"
 						value="#{ventaService.rucCliente}" />
 					<h:outputText value="Cantidad" />
 					<p:inputText id="nuevoCantidad"
@@ -84,5 +132,6 @@
 				</p:dataTable>
 			</p:dialog>
 		</h:form>
+
 	</ui:define>
 </ui:composition>

@@ -106,13 +106,17 @@ public class Venta implements Serializable {
 		this.ventaDetalles = ventaDetalles;
 	}
 
-	public void edit(String fecha, Integer montoTotal,
-			List<VentaDetalle> detalles, Cliente cliente) throws ParseException {
-		this.montoTotal = montoTotal;
-		this.cliente = cliente;
-		this.setVentaDetalles(ventaDetalles);
+	public void edit(String fecha1, Integer montoTotal1,
+			List<VentaDetalle> detalles, Cliente cliente1) throws ParseException {
+		System.out.println(fecha1);
+		System.out.println(montoTotal1);
+		this.montoTotal = montoTotal1;
+		this.cliente = cliente1;
+		this.setVentaDetalles(detalles);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		this.fecha = sdf.parse(fecha);
+		this.fecha = sdf.parse(fecha1);
+		System.out.println(this.fecha);
+		System.out.println("*****");
 		
 		
 	}
