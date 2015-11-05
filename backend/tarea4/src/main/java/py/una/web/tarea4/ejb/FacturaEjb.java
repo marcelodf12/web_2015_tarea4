@@ -63,7 +63,7 @@ public class FacturaEjb {
     //@AccessTimeout(-1)
     public Future<String> facturacion() {
   
-           // prepararConsulta();
+ 
             carpeta = new File("/home/rodrigo/Escritorio/temp/reportes_"+generarNumero());
             carpeta.mkdirs();
             int contador= 0;
@@ -76,7 +76,7 @@ public class FacturaEjb {
                 System.out.println("============ venta :"+ venta.getNumero());
                 if(context.wasCancelCalled() == false){
                         try {
-                            Thread.sleep(SECONDS.toMillis(2));
+                            Thread.sleep(SECONDS.toMillis(3));
                         } catch (InterruptedException ex) {
                             Logger.getLogger(FacturaEjb.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -91,7 +91,7 @@ public class FacturaEjb {
 
                         System.out.println("============ factura total :"+ factura.getTotal());
                         pdf(factura);
-                        System.out.println("============ facturado... :");
+                        System.out.println("============ facturado...!");
                         contador++;
                     
                 }else{
@@ -101,8 +101,9 @@ public class FacturaEjb {
                     return new AsyncResult<String>("");
                 }
             }
-            if(contador==0)
-            carpeta.delete();
+            if(contador==0){
+            	carpeta.delete();
+            }
             instancia.estadoFacturacion =  new AsyncResult<String>("");
             return new AsyncResult<String>("");
     }     
@@ -132,11 +133,8 @@ public class FacturaEjb {
 	public void pdf(Factura factura) {
                   
         try
-        {
-        	
-
-        	
-        	String fileName= "/home/rodrigo/Escritorio/temp/FAC-"+factura.getId().toString();
+        {       	
+        	String fileName= carpeta.getPath()+"/FAC-"+factura.getId().toString();
         	
         	File file = new File(fileName);
             FileOutputStream pdfFileout = new FileOutputStream(file);
@@ -145,11 +143,11 @@ public class FacturaEjb {
         	PdfWriter.getInstance(document, pdfFileout);
             
         	document.open();
-            Paragraph p1 = new Paragraph("Nro Factura : FAC-"+ factura.getId());
-            
+            Paragraph p1 = new Paragraph("Nro Factura : FAC-"+ factura.getId());            
             Paragraph p2 = new Paragraph("Cliente : "+ factura.getVenta().getCliente().getNombre());
             Paragraph p3 = new Paragraph("Fecha : "+ factura.getFecha());
             PdfPTable tab = new PdfPTable(4);
+            
             tab.addCell("Cantidad");
             tab.addCell("Producto");
             tab.addCell("Precio");
@@ -163,12 +161,14 @@ public class FacturaEjb {
 	        	tab.addCell(new Integer(detalle.getCantidad()*detalle.getPrecio()).toString());      	
 	        	
 	        }
-	        tab.addCell("Total : "+factura.getTotal().toString());
-	        
+
+            Paragraph p4 = new Paragraph("Total : "+factura.getTotal().toString());
+	        document.add(new Paragraph(""));
 	        document.add(p1);
 	        document.add(p2);
 	        document.add(p3);
             document.add(tab);
+            document.add(p4);
             document.close();
         	
           
