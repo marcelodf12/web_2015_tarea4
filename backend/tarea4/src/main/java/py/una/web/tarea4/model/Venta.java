@@ -50,11 +50,6 @@ public class Venta implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="ruc_cliente", referencedColumnName="ruc")
 	private Cliente cliente;
-
-	//bi-directional many-to-one association to Factura
-	@ManyToOne
-	@JoinColumn(name="id_factura")
-	private Factura factura;
 	
 	@OneToMany(mappedBy="venta", cascade=CascadeType.PERSIST)
 	private List<VentaDetalle> ventaDetalles;
@@ -102,13 +97,6 @@ public class Venta implements Serializable {
 		this.cliente = cliente;
 	}
 
-	public Factura getFactura() {
-		return this.factura;
-	}
-
-	public void setFactura(Factura factura) {
-		this.factura = factura;
-	}
 
 	public List<VentaDetalle> getVentaDetalles() {
 		return ventaDetalles;

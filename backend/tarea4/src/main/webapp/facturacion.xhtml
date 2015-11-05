@@ -22,121 +22,46 @@
 	template="/WEB-INF/templates/default.xhtml"
 	xmlns:p="http://primefaces.org/ui">
 	<ui:define name="content">
-		<h1>Gestión de Productos</h1>
+		<h1>Facturación</h1>
 
-		<h:form id="form">
-			<p:growl id="growl" showDetail="true" sticky="true" />
-			<p:commandButton value="Nuevo Producto" icon="ui-icon-star"
-				onclick="PF('dlg1').show();" />
-			<br />
+		<p:growl id="growl" />
+		<p:progressBar id="progressBarClient" widgetVar="pbClient"
+			style="width:300px" />
+		<br /><br />
+		<h3 style="margin-top: 0" >Pregreso Facturación</h3>
+		<p:commandButton value="Start" id="start" type="button" onclick="start()" widgetVar="startButton1"/>
+		<p:commandButton value="Cancel" id="cancel" type="button"
+			onclick="cancel()" />
 
+		<h:form>
+			<p:messages id="messages" showDetail="true" autoUpdate="false"
+				closable="true" />
+			<h1>Generar Facturacion</h1>
+			<p:commandButton actionListener="#{facturaController.facturar}"
+				id="facturador" icon="ui-icon-disk" value="Facturar"
+				disabled="#{facturaController.isRun()}"
+				update="facturador detener estado">
+				<p:confirm header="Confimacion" message="Esta seguro?"
+					icon="ui-icon-alert" />
+			</p:commandButton>
 
-			<p:dialog header="Nuevo Producto" widgetVar="dlg1" minHeight="40">
-				<h:panelGrid columns="1" style="margin-bottom:10px" cellpadding="2"
-					columnClasses="label, value">
-					<h3 style="margin-top: 0">Ingrese los Datos del producto</h3>
-					<h:outputText value="Nombre" />
-					<p:inputText id="nuevoNombre"
-						value="#{productoService.nuevoNombre}" />
-					<h:outputText value="Precio" />
-					<p:inputText id="nuevoPrecio"
-						value="#{productoService.nuevoPrecio}" />
-				</h:panelGrid>
-				<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="2"
-					columnClasses="label, value">
-					<p:commandButton value="Guardar" icon="ui-icon-disk"
-						actionListener="#{productoService.crear()}" update="form" />
-					<p:commandButton value="Limpiar" icon="ui-icon-delete"
-						update="form" actionListener="#{productoService.limpiar()}" />
-					<p:commandButton value="Cancelar" icon="ui-icon-close"
-						onclick="PF('dlg1').hide();" />
-				</h:panelGrid>
-			</p:dialog>
-
-			<p:dialog header="Modificar Producto" widgetVar="dlg2" minHeight="40">
-				<h:panelGrid columns="1" style="margin-bottom:10px" cellpadding="2"
-					columnClasses="label, value">
-					<h3 style="margin-top: 0">Ingrese los Datos del producto</h3>
-					<h:outputText value="Nombre" />
-					<p:inputText id="viejoNombre"
-						value="#{productoService.viejoNombre}" />
-					<h:outputText value="Precio" />
-					<p:inputText id="viejoPrecio"
-						value="#{productoService.viejoPrecio}" />
-				</h:panelGrid>
-				<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="2"
-					columnClasses="label, value">
-					<p:commandButton value="Guardar" icon="ui-icon-disk"
-						actionListener="#{productoService.modificar()}" update="form" />
-					<p:commandButton value="Limpiar" icon="ui-icon-delete"
-						update="form" actionListener="#{productoService.limpiar()}" />
-					<p:commandButton value="Cancelar" icon="ui-icon-close"
-						onclick="PF('dlg2').hide();" />
-				</h:panelGrid>
-			</p:dialog>
-
-
-			<p:separator />
-			<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="2"
-				columnClasses="label, value">
-				<p:inputText id="filtroGeneral"
-					value="#{productoService.filtroGeneral}" />
-				<p:selectOneListbox id="basic" value="#{productoService.orden}">
-					<f:selectItem itemLabel="Ascendente" itemValue="ASC" />
-					<f:selectItem itemLabel="Descendente" itemValue="DESC" />
-				</p:selectOneListbox>
-				<p:commandButton value="Buscar"
-					actionListener="#{productoService.primeraPagina()}" id="act"
-					title="Buscar" update="form" />
-				<br />
-			</h:panelGrid>
-			<p:separator />
-			<p:dataTable value="#{productoService.productos}" var="producto">
-				<p:column headerText="Precio">
-					<h:outputText value="#{producto.id}" />
-				</p:column>
-
-				<p:column headerText="Nombre">
-					<h:outputText value="#{producto.nombre}" />
-				</p:column>
-
-				<p:column headerText="Precio">
-					<h:outputText value="#{producto.precio}" />
-				</p:column>
-
-				<p:column headerText="Stock">
-					<h:outputText value="#{producto.stock}" />
-				</p:column>
-
-				<p:column headerText="Acciones">
-					<p:commandButton
-						actionListener="#{productoService.remove(producto.id)}"
-						icon="ui-icon-close" ajax="false" />
-					<p:commandButton
-						actionListener="#{productoService.edit(producto.id)}"
-						icon="ui-icon-pencil" />
-				</p:column>
-
-			</p:dataTable>
-			<br />
-			<center>
-				<p:commandButton value="Primera"
-					actionListener="#{productoService.primeraPagina()}" id="pp"
-					title="Ir a la primera página" update="form" />
-				<p:commandButton value="Anterior"
-					actionListener="#{productoService.anteriorPagina()}" id="pa"
-					title="Página Anterior" update="form" />
-				<h:outputText
-					value=" #{productoService.paginaActual} / #{productoService.totalPaginas} "
-					style="font-weight:bold" update="form" />
-				<p:commandButton value="Siguiente"
-					actionListener="#{productoService.siguientePagina()}" id="ps"
-					title="Siguiente página" update="form" />
-				<p:commandButton value="Ultima"
-					actionListener="#{productoService.ultimaPagina()}" id="pu"
-					title="Ir a la ultima página" update="form" />
-			</center>
-
+			<p:commandButton actionListener="#{facturaController.detener}"
+				id="detener" icon="ui-icon-stop" value="Detener"
+				disabled="#{!facturaController.isRun()}"
+				update="facturador detener estado" />
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+				<p:commandButton value="Si" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+			<br></br>
+			<br></br>
+			<br></br>
+            ESTADO: <h:outputText id="estado" rendered="true"
+				value="#{facturaController.estado()}"></h:outputText>
 		</h:form>
+
+
 	</ui:define>
 </ui:composition>

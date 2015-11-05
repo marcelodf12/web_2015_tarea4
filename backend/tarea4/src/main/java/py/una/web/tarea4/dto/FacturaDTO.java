@@ -1,5 +1,7 @@
 package py.una.web.tarea4.dto;
 
+import java.util.Date;
+
 import py.una.web.tarea4.model.Factura;
 
 public class FacturaDTO {
@@ -8,6 +10,7 @@ public class FacturaDTO {
 	private Integer idVentaCabecera;
 	private Boolean impreso;
 	private Integer total;
+	private Date fecha;
 	
 	public FacturaDTO() {
 	}
@@ -17,6 +20,7 @@ public class FacturaDTO {
 		this.idVentaCabecera= f.getIdVentaCabecera();
 		this.impreso= f.getImpreso();
 		this.total= f.getTotal();
+		this.fecha=f.getFecha();
 	}
 
 	public Integer getId() {
@@ -50,5 +54,15 @@ public class FacturaDTO {
 	public void setTotal(Integer total) {
 		this.total = total;
 	}
+
+	public Date getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
+	
+	
 	
 }

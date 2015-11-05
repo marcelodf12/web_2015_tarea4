@@ -11,7 +11,6 @@ public class VentaDTO {
 	private String nombreCliente;
 	private Date fecha;
 	private ClienteDTO cliente;
-	private FacturaDTO factura;
 	
 	public VentaDTO(){
 	}
@@ -22,7 +21,6 @@ public class VentaDTO {
 		this.nombreCliente= v.getNombreCliente();
 		this.fecha= v.getFecha();
 		if (v.getCliente()!= null) this.cliente= new ClienteDTO(v.getCliente());
-		if (v.getFactura()!= null) this.factura= new FacturaDTO(v.getFactura());
 	}
 
 	public Integer getNumero() {
@@ -65,11 +63,5 @@ public class VentaDTO {
 		this.cliente = cliente;
 	}
 
-	public FacturaDTO getFactura() {
-		return factura;
-	}
 
-	public void setFactura(FacturaDTO factura) {
-		this.factura = factura;
-	}
 }

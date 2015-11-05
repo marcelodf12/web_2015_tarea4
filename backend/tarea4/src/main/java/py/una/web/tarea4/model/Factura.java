@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
-import java.util.List;
+import java.util.Date;
+
 
 
 /**
@@ -27,12 +28,30 @@ public class Factura implements Serializable {
 	private Boolean impreso;
 
 	private Integer total;
+	
+	private Date fecha;
 
-	//bi-directional many-to-one association to Venta
-	@OneToMany(mappedBy="factura")
-	private List<Venta> ventas;
+	private Venta venta;
+
+	
+	
+	public Venta getVenta() {
+		return venta;
+	}
+
+	public void setVenta(Venta venta) {
+		this.venta = venta;
+	}
 
 	public Factura() {
+	}
+	
+	public Date getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
 	}
 
 	public Integer getId() {
@@ -65,28 +84,6 @@ public class Factura implements Serializable {
 
 	public void setTotal(Integer total) {
 		this.total = total;
-	}
-
-	public List<Venta> getVentas() {
-		return this.ventas;
-	}
-
-	public void setVentas(List<Venta> ventas) {
-		this.ventas = ventas;
-	}
-
-	public Venta addVenta(Venta venta) {
-		getVentas().add(venta);
-		venta.setFactura(this);
-
-		return venta;
-	}
-
-	public Venta removeVenta(Venta venta) {
-		getVentas().remove(venta);
-		venta.setFactura(null);
-
-		return venta;
 	}
 
 }
