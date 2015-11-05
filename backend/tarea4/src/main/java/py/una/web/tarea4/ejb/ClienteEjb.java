@@ -153,12 +153,11 @@ public class ClienteEjb implements ClienteEjbLocal {
 				contar += " WHERE activo = true";
 			}
 		}
-
-		System.out.println(query);
-
 		if (orderDir != null && orderCol != null) {
 			query += " ORDER BY c." + orderCol + " " + orderDir;
 		}
+		
+		System.out.println(query);
 
 		Query q = em.createQuery(query, Cliente.class);
 		Query q2 = em.createQuery(contar, Long.class);
@@ -179,6 +178,84 @@ public class ClienteEjb implements ClienteEjbLocal {
 		respuesta.setCantidadDePaginas(cantPag);
 
 		return respuesta;
+	}
+	
+	public void exportacion(String orderCol, String orderDir, String campo,
+			String filtro, String metodo) throws IOException{
+		String nombreArchivo= "C:\\jboss\\clientes." + metodo;
+    	File fichero= new File(nombreArchivo);
+    	if (fichero.exists()) fichero.delete();
+    	Integer inicio= 0;
+    	Integer cantidad= 5;//Cuantos elementos va a cargar en memoria
+    	FileWriter fw = new FileWriter(fichero);
+    	if (metodo.compareTo("csv")==0){
+    		fw.write("RUC, NOMBRE, DIRECCION");
+    	}else{
+    		fw.write("[");
+    	}
+    	
+    	//crear query
+    	String query = "SELECT c FROM Cliente c ";
+		String contar = "SELECT COUNT(c.id) FROM Cliente c ";
+		if (filtro != null && campo != null) {
+			query += " WHERE " + campo + " LIKE '%" + filtro
+					+ "%' AND activo = true";
+			contar += " WHERE " + campo + " LIKE '%" + filtro
+					+ "%' AND activo = true";
+		} else if (filtro != null) {
+			if (filtro.compareTo("") != 0) {
+				String[] campos = { "ruc", "direccion" };
+				query += " WHERE ((nombre LIKE '%" + filtro + "%')";
+				contar += " WHERE ((nombre LIKE '%" + filtro + "%')";
+				for (String c : campos) {
+					query += " OR (" + c + " LIKE '%" + filtro + "%')";
+					contar += " OR (" + c + " LIKE '%" + filtro + "%')";
+				}
+				query += ") AND activo = true";
+				contar += ") AND activo = true";
+			} else {
+				query += " WHERE activo = true";
+				contar += " WHERE activo = true";
+			}
+		}
+		if (orderDir != null && orderCol != null) {
+			query += " ORDER BY c." + orderCol + " " + orderDir;
+		}
+		Query q = em.createQuery(query, Cliente.class);
+		Query q2 = em.createQuery(contar, Long.class);
+		Long totalResultados = (Long) q2.getSingleResult();
+		Double div = ((double) totalResultados / (double) cantidad);
+		Integer cantPag = div.intValue();
+		if (totalResultados % cantidad != 0)
+			cantPag++;
+		//TErminamos el query
+		
+		boolean yaExisteJson= false; //Control para las comas en JSON
+		for (int i=0; i<cantPag; i++){
+			q.setFirstResult(inicio);
+			q.setMaxResults(cantidad);
+			List<Cliente> lista= (ArrayList<Cliente>) q.getResultList();
+    		for (Cliente c: lista){
+    			if (c != null){
+    				if (metodo.compareTo("csv")==0){
+    					fw.write("\n\"" + c.getNombre() + "\", ");
+            			fw.write("\"" + c.getNombre() + "\", ");
+            			fw.write("\"" + c.getDireccion() + "\"");
+            		}else{
+            			if (yaExisteJson) fw.write(",");
+            			fw.write("{\"ruc\":" + "\"" + c.getRuc() + "\",");
+            			fw.write("\"nombre\":" + "\"" + c.getNombre() + "\",");
+            			fw.write("\"direccion\":" + "\"" + c.getDireccion() + "\"");
+            			fw.write("}");
+            			yaExisteJson= true;
+            		}
+    			}
+    		}
+			inicio+=cantidad;
+		}
+    	if (metodo.compareTo("json")==0) fw.write("]");
+    	fw.flush();
+    	fw.close();
 	}
 
 	public void eliminar(String ruc) {

@@ -74,14 +74,27 @@ public class ClienteService {
 
 	public ArrayList<Cliente> getClientes() {
 		String orderCol= campo;
-		if (campo.compareTo("todos")==0){
-			orderCol= "ruc";
-			campo= null;
+		if (campo!=null){
+			if (campo.compareTo("todos")==0){
+				orderCol= "ruc";
+				campo= null;
+			}
 		}
 		ListaPaginada<Cliente> l = clienteEjb.listar(cantidadPorPagina,
 				paginaActual, orderCol, orden, campo, filtroGeneral);
 		totalPaginas = l.getCantidadDePaginas();
 		return l.getLista();
+	}
+	
+	public void exportar(String metodo) throws IOException{
+		String orderCol= campo;
+		if (campo!=null){
+			if (campo.compareTo("todos")==0){
+				orderCol= "ruc";
+				campo= null;
+			}
+		}
+		clienteEjb.exportacion(orderCol, orden, campo, filtroGeneral, metodo);
 	}
 
 	public void primeraPagina() {
