@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -73,6 +74,11 @@ public class CompraService {
 		if (nuevaCompra != null) {
 			if (nuevaCompra.getCompraDetalles().size() > 0) {
 				nuevaCompra.setProveedor(proveedorEjb.findById(rucProveedor));
+				nuevaCompra.setMontoTotal(0);
+				for(CompraDetalle c: nuevaCompra.getCompraDetalles()){
+					nuevaCompra.setMontoTotal(nuevaCompra.getMontoTotal() + c.getCantidad()*c.getPrecio());
+				}
+				nuevaCompra.setFecha(new Date());
 				compraEjb.nuevaCompra(nuevaCompra);
 				nuevaCompra = new Compra();
 				nuevaCompra.setCompraDetalles(new ArrayList<CompraDetalle>());
@@ -85,6 +91,10 @@ public class CompraService {
 	}
 
 	public List<CompraDetalle> getDetalles() {
+		if (nuevaCompra == null) {
+			nuevaCompra = new Compra();
+			nuevaCompra.setCompraDetalles(new ArrayList<CompraDetalle>());
+		}
 		return nuevaCompra.getCompraDetalles();
 	}
 
