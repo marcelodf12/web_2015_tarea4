@@ -64,13 +64,19 @@
 				</h:panelGrid>
 			</p:dialog>
 			<p:separator />
-			<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="2"
+			<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="2"
 				columnClasses="label, value">
 				<p:inputText id="filtroGeneral"
 					value="#{clienteService.filtroGeneral}" />
-				<p:selectOneListbox id="basic" value="#{clienteService.orden}">
-					<f:selectItem itemLabel="Ascendente" itemValue="ASC" />
-					<f:selectItem itemLabel="Descendente" itemValue="DESC" />
+				<p:selectOneListbox id="basic" value="#{clienteService.campo}">
+					<f:selectItem itemLabel="Todos los campos" itemValue="todos" />
+					<f:selectItem itemLabel="RUC" itemValue="ruc" />
+					<f:selectItem itemLabel="Nombre" itemValue="nombre" />
+					<f:selectItem itemLabel="Direccion" itemValue="direccion" />
+				</p:selectOneListbox>
+				<p:selectOneListbox id="basic2" value="#{clienteService.orden}">
+					<f:selectItem itemLabel="ASC" itemValue="ASC" />
+					<f:selectItem itemLabel="DESC" itemValue="DESC" />
 				</p:selectOneListbox>
 				<p:commandButton value="Buscar"
 					actionListener="#{clienteService.primeraPagina()}" id="act"

@@ -35,7 +35,9 @@ public class ClienteService {
 
 	private String filtroGeneral;
 
-	private String orden = "ASC";
+	private String orden= "ASC";
+
+	private String campo= "ruc";
 
 	private Integer totalPaginas;
 
@@ -71,8 +73,13 @@ public class ClienteService {
 	}
 
 	public ArrayList<Cliente> getClientes() {
+		String orderCol= campo;
+		if (campo.compareTo("todos")==0){
+			orderCol= "ruc";
+			campo= null;
+		}
 		ListaPaginada<Cliente> l = clienteEjb.listar(cantidadPorPagina,
-				paginaActual, "nombre", orden, null, filtroGeneral);
+				paginaActual, orderCol, orden, campo, filtroGeneral);
 		totalPaginas = l.getCantidadDePaginas();
 		return l.getLista();
 	}
@@ -162,6 +169,14 @@ public class ClienteService {
 
 	public String getNuevoNombre() {
 		return nuevoNombre;
+	}
+
+	public String getCampo() {
+		return campo;
+	}
+
+	public void setCampo(String campo) {
+		this.campo = campo;
 	}
 
 	public String getNuevoRuc() {

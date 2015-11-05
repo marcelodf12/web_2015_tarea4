@@ -12,9 +12,12 @@ import py.una.web.tarea4.model.Cliente;
 import py.una.web.tarea4.util.ListaPaginada;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -193,4 +196,55 @@ public class ClienteEjb implements ClienteEjbLocal {
 			return null;
 		}
 	}
+	
+	public void exportacion(Cliente c, String orderBy, String orderDir, String metodo) throws Exception{
+    	try{
+    		String nombreArchivo= "C:\\jboss\\clientes." + metodo;
+        	File fichero= new File(nombreArchivo);
+        	if (fichero.exists()) fichero.delete();
+        	Integer inicio= 0;
+        	Integer cantidad= 3;//Cuantos elementos va a cargar en memoria
+        	FileWriter fw = new FileWriter(fichero);
+        	if (metodo.compareTo("cvs")==0){
+        		fw.write("NUMERO, NOMBRE_CLIENTE, MONTO_TOTAL, FECHA, RUC_CLIENTE");
+        	}else{
+        		fw.write("[");
+        	}
+        	/*List<Cliente> lista= listar(inicio, cantidad, orderBy, orderDir, venta);
+        	boolean yaExisteJson= false; //Control para las comas en JSON
+        	while (lista.size() != 0){
+        		for (Cliente p: lista){
+        			/*if (p != null){
+        				if (metodo.compareTo("cvs")==0){
+                			fw.write("\n" + p.getNumero() + ", ");
+                			fw.write("\"" + p.getNombreCliente() + "\", ");
+                			fw.write(p.getMontoTotal() + ", ");
+                			fw.write(p.getFecha() + ", " );
+                			fw.write(p.getCliente().getRuc());
+                		}else{
+                			if (yaExisteJson) fw.write(",");
+                			fw.write("{\"numero\":" + p.getNumero() + ",");
+                			fw.write("\"nombre_cliente\":" + "\"" + p.getNombreCliente() + "\",");
+                			fw.write("\"monto_total\":" +  p.getMontoTotal() + ",");
+                			fw.write("\"fecha\":" + "\"" + p.getFecha() + "\"" +  ",");
+                				fw.write("\"cliente\":{\"ruc\":" + "\"" + p.getCliente().getRuc() + "\"" + ",");
+                				fw.write("\"nombre\":" + "\"" + p.getCliente().getNombre() + "\"" + "," );
+                				fw.write("\"direccion\":" + "\"" + p.getCliente().getDireccion() + "\"" + "," );
+                				fw.write("\"activo\":" + p.getCliente().getActivo() + "}" );
+                			fw.write("}");
+                			yaExisteJson= true;
+                		}
+        			}
+        		}
+        		inicio+=cantidad;
+        		lista= listar(inicio, cantidad, orderBy, orderDir, null);
+        	}  	*/
+        	if (metodo.compareTo("json")==0) fw.write("]");
+        	fw.flush();
+        	fw.close();
+    	}catch(Exception e){
+    		context.setRollbackOnly();
+    		throw e;
+    	}
+    }
 }
