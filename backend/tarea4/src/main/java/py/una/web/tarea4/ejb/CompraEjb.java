@@ -50,6 +50,16 @@ public class CompraEjb {
 	@Inject
 	private ProductoEjb productoEjb;
 	
+	public Boolean nuevaCompra(Compra c) {
+		try {
+			em.persist(c);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	public ArrayList<Integer> cargaMasiva(String file) throws IOException {
 		Boolean fallo = false;
 		ArrayList<Integer> errores = new ArrayList<Integer>();
