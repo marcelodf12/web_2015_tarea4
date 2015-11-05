@@ -1,6 +1,8 @@
 package py.una.web.tarea4.ejb;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ejb.LocalBean;
@@ -11,6 +13,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import py.una.web.tarea4.model.Producto;
+import py.una.web.tarea4.model.SolicitudCompra;
 import py.una.web.tarea4.util.ListaPaginada;
 
 @Stateless
@@ -127,4 +130,24 @@ public class ProductoEjb {
 			return null;
 		}
 	}
+	
+	public void inventario() throws Exception{
+    	try{
+    		Query q= em.createNativeQuery("SELECT * FROM PRODUCTOS WHERE STOCK<10", Producto.class);
+            List<Producto> lista= q.getResultList();
+            for (Producto p: lista){
+            	SolicitudCompra s= new SolicitudCompra();
+            	s.setNombre(p.getNombre());
+            	s.setFecha(new Date());	
+            	if (em.find(SolicitudCompra.class, s.getNombre())== null){
+            		em.persist(s);
+            	}else{
+            		em.merge(s);
+            	}
+            }
+    	}catch(Exception e){
+    		context.setRollbackOnly();
+    		throw e;
+    	}
+    }
 }

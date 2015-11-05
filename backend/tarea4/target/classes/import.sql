@@ -47,6 +47,8 @@ INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (6, true, 'Produ
 INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (7, true, 'Producto 7', 700, 70);
 INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (8, true, 'Producto 8', 800, 80);
 INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (9, true, 'Producto 9', 900, 90);
+INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (10, true, 'Producto 10', 1000, 5);
+INSERT INTO productos(id, activo, nombre, precio, stock) VALUES (11, true, 'Producto 11', 1100, 8);
 
 INSERT INTO compras(id, fecha, monto_total, ruc_proveedor) VALUES (1, '2015/10/20', 14400, 1);
 INSERT INTO compras(id, fecha, monto_total, ruc_proveedor) VALUES (2, '2015/10/21', 14400, 2);
