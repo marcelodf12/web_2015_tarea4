@@ -26,7 +26,6 @@ import py.una.web.tarea4.ejb.ProveedorEjb;
 import py.una.web.tarea4.model.Compra;
 import py.una.web.tarea4.model.CompraDetalle;
 import py.una.web.tarea4.model.Producto;
-import py.una.web.tarea4.model.Proveedor;
 
 @ManagedBean(name = "compraService")
 @ViewScoped
