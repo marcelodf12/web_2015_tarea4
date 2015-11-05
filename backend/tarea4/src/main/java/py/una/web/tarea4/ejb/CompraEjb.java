@@ -24,9 +24,6 @@ import py.una.web.tarea4.util.CompraJson;
 
 import com.google.gson.Gson;
 
-
-
-
 /**
  * Session Bean implementation class VentaEjb
  */
@@ -34,27 +31,43 @@ import com.google.gson.Gson;
 @LocalBean
 public class CompraEjb {
 
-    /**
-     * Default constructor. 
-     */
-    public CompraEjb() {
-        // TODO Auto-generated constructor stub
-    }
-    
-    @PersistenceContext
-    private EntityManager em;
-	
+	/**
+	 * Default constructor.
+	 */
+	public CompraEjb() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@PersistenceContext
+	private EntityManager em;
+
 	@Resource
-    private SessionContext context;
-	
+	private SessionContext context;
+
 	@Inject
 	private ProductoEjb productoEjb;
-	
+
+	public Boolean nuevaCompra(Compra c) {
+		try {
+			for (CompraDetalle d : c.getCompraDetalles()) {
+				Producto p = productoEjb.findById(d.getProducto().getId());
+				p.setStock(d.getProducto().getStock() + d.getCantidad());
+				d.setProducto(p);
+				em.persist(d);
+			}
+			em.persist(c);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	public ArrayList<Integer> cargaMasiva(String file) throws IOException {
 		Boolean fallo = false;
 		ArrayList<Integer> errores = new ArrayList<Integer>();
 		BufferedReader br = null;
-		String line = "";		
+		String line = "";
 		Integer numeroDeLinea = 0;
 		Gson gson = new Gson();
 		try {
@@ -63,27 +76,31 @@ public class CompraEjb {
 			while ((line = br.readLine()) != null) {
 				numeroDeLinea++;
 				try {
-					CompraJson nuevaCompra = gson.fromJson(line, CompraJson.class);
+					CompraJson nuevaCompra = gson.fromJson(line,
+							CompraJson.class);
 					List<CompraDetalle> detalles = new ArrayList<CompraDetalle>();
 					Integer montoTotal = 0;
 					Compra compra = new Compra();
-					Proveedor proveedor = em.find(Proveedor.class, nuevaCompra.getProveedor());
+					Proveedor proveedor = em.find(Proveedor.class,
+							nuevaCompra.getProveedor());
 					compra.setProveedor(proveedor);
-					for(CompraDetalleJson d:nuevaCompra.getDetalles()){
+					for (CompraDetalleJson d : nuevaCompra.getDetalles()) {
 						Producto p = productoEjb.findById(d.getProducto());
-						p.setStock(p.getStock()+d.getCantidad());
-						CompraDetalle nuevoDetalle = new CompraDetalle(d.getCantidad(), d.getPrecio(), p);
+						p.setStock(p.getStock() + d.getCantidad());
+						CompraDetalle nuevoDetalle = new CompraDetalle(
+								d.getCantidad(), d.getPrecio(), p);
 						nuevoDetalle.setCompra(compra);
 						detalles.add(nuevoDetalle);
-						montoTotal+=d.getPrecio()*d.getCantidad();
+						montoTotal += d.getPrecio() * d.getCantidad();
 						em.persist(nuevoDetalle);
 					}
-					compra.edit(nuevaCompra.getFecha(), montoTotal, detalles, proveedor);
+					compra.edit(nuevaCompra.getFecha(), montoTotal, detalles,
+							proveedor);
 					em.persist(compra);
 				} catch (Exception e) {
 					e.getMessage();
 					errores.add(numeroDeLinea);
-					fallo=true;
+					fallo = true;
 				}
 			}
 		} catch (FileNotFoundException e) {

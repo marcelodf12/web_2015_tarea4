@@ -1,6 +1,7 @@
 package py.una.web.tarea4.ejb;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ejb.LocalBean;
@@ -84,6 +85,11 @@ public class ProveedorEjb {
 
 		return respuesta;
 	};
+	
+	public List<Proveedor> listarTodos(){
+		ListaPaginada<Proveedor> l = listar(1000, 1, "nombre", "ASC", null, null);
+		return l.getLista();
+	}
 
 	public void eliminar(String ruc){
 		try {

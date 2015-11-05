@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
@@ -18,13 +20,139 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
+import py.una.web.tarea4.ejb.ClienteEjb;
+import py.una.web.tarea4.ejb.ProductoEjb;
 import py.una.web.tarea4.ejb.VentaEjb;
+import py.una.web.tarea4.model.Producto;
+import py.una.web.tarea4.model.Venta;
+import py.una.web.tarea4.model.VentaDetalle;
 
 @ManagedBean(name = "ventaService")
 @ViewScoped
 public class VentaService {
 	@Inject
 	VentaEjb ventaEjb;
+
+	@Inject
+	ProductoEjb productoEjb;
+	
+	@Inject
+	ClienteEjb clienteEjb;
+	
+	private String rucCliente;
+
+	private Integer nuevoIdProducto;
+
+	private Integer nuevoCantidad;
+
+	private Integer nuevoPrecio;
+
+	private Venta nuevaVenta;
+
+	public void agregar() {
+		System.out.println("Agregar nuevo detalle");
+		if (nuevaVenta == null) {
+			nuevaVenta = new Venta();
+			nuevaVenta.setVentaDetalles(new ArrayList<VentaDetalle>());
+		}
+		System.out.println(nuevoIdProducto);
+		Producto producto = productoEjb.findById(nuevoIdProducto);
+		if (producto != null) {
+			nuevaVenta.getVentaDetalles().add(
+					new VentaDetalle(nuevoCantidad, nuevoPrecio, producto));
+			nuevoCantidad = 1;
+			nuevoIdProducto = 0;
+			nuevoPrecio = 0;
+		} else {
+			System.out.println("No se encontro el producto");
+		}
+		RequestContext context = RequestContext.getCurrentInstance();
+    	context.execute("PF('dlg1').show();");
+    	context.update("form");
+	}
+	
+	public void remove(VentaDetalle d){
+		nuevaVenta.getVentaDetalles().remove(d);
+		RequestContext context = RequestContext.getCurrentInstance();
+    	context.execute("PF('dlg1').show();");
+    	context.update("form");
+	}
+
+	public void guardarVenta() {
+		if (nuevaVenta != null) {
+			if (nuevaVenta.getVentaDetalles().size() > 0) {
+				nuevaVenta.setCliente(clienteEjb.findById(rucCliente));
+				nuevaVenta.setMontoTotal(0);
+				for(VentaDetalle c: nuevaVenta.getVentaDetalles()){
+					nuevaVenta.setMontoTotal(nuevaVenta.getMontoTotal() + c.getCantidad()*c.getPrecio());
+				}
+				nuevaVenta.setFecha(new Date());
+				ventaEjb.nuevaVenta(nuevaVenta);
+				nuevaVenta = new Venta();
+				nuevaVenta.setVentaDetalles(new ArrayList<VentaDetalle>());
+				nuevoCantidad = 1;
+				nuevoIdProducto = 0;
+				nuevoPrecio = 0;
+			}
+		}
+
+	}
+
+	public List<VentaDetalle> getDetalles() {
+		if (nuevaVenta == null) {
+			nuevaVenta = new Venta();
+			nuevaVenta.setVentaDetalles(new ArrayList<VentaDetalle>());
+		}
+		return nuevaVenta.getVentaDetalles();
+	}
+	
+	
+	
+	
+	
+	public String getRucCliente() {
+		return rucCliente;
+	}
+
+	public Integer getNuevoIdProducto() {
+		return nuevoIdProducto;
+	}
+
+	public Integer getNuevoCantidad() {
+		return nuevoCantidad;
+	}
+
+	public Integer getNuevoPrecio() {
+		return nuevoPrecio;
+	}
+
+	public Venta getNuevaVenta() {
+		return nuevaVenta;
+	}
+
+	public void setRucCliente(String rucCliente) {
+		this.rucCliente = rucCliente;
+	}
+
+	public void setNuevoIdProducto(Integer nuevoIdProducto) {
+		this.nuevoIdProducto = nuevoIdProducto;
+	}
+
+	public void setNuevoCantidad(Integer nuevoCantidad) {
+		this.nuevoCantidad = nuevoCantidad;
+	}
+
+	public void setNuevoPrecio(Integer nuevoPrecio) {
+		this.nuevoPrecio = nuevoPrecio;
+	}
+
+	public void setNuevaVenta(Venta nuevaVenta) {
+		this.nuevaVenta = nuevaVenta;
+	}
+
+
+
+
 
 	private UploadedFile file;
 
