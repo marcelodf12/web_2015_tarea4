@@ -52,7 +52,7 @@ public class VentaDetalle implements Serializable {
 		super();
 		this.cantidad = cantidad;
 		this.precio = precio;
-		this.setProducto(producto);
+		this.setProducto(p);
 	}
 
 	public Integer getId() {
