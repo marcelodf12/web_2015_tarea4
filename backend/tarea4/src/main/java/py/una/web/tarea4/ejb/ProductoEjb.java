@@ -131,6 +131,7 @@ public class ProductoEjb {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void inventario() throws Exception{
     	try{
     		Query q= em.createNativeQuery("SELECT * FROM PRODUCTOS WHERE STOCK<10", Producto.class);

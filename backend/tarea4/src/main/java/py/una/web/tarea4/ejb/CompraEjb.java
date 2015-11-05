@@ -16,7 +16,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import py.una.web.tarea4.model.Cliente;
 import py.una.web.tarea4.model.Compra;
 import py.una.web.tarea4.model.CompraDetalle;
 import py.una.web.tarea4.model.Producto;

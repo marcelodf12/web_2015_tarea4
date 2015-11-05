@@ -12,6 +12,7 @@ import javax.persistence.Table;
 @Table(name="solicitudcompras")
 @NamedQuery(name="SolicitudCompra.findAll", query="SELECT s FROM SolicitudCompra s")
 public class SolicitudCompra {
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 	public SolicitudCompra() {
 	}
