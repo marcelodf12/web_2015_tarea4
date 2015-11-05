@@ -37,39 +37,52 @@
 			<p:growl id="growl" showDetail="true" sticky="true" />
 			<p:commandButton value="Carga Masiva"
 				icon="ui-icon-arrowthickstop-1-n" onclick="PF('dlg3').show();" />
-			<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="2">
-				<h:outputText value="Proveedor" />
-				<p:inputText id="rucProveedor" value="#{compraService.rucProveedor}" />
-				<h:outputText value="Cantidad" />
-				<p:inputText id="nuevoCantidad"
-					value="#{compraService.nuevoCantidad}" />
-				<h:outputText value="Codigo Producto" />
-				<p:inputText id="nuevoIdProducto"
-					value="#{compraService.nuevoIdProducto}" />
-				<h:outputText value="Precio Unitario" />
-				<p:inputText id="nuevoPrecio" value="#{compraService.nuevoPrecio}" />
+			<p:commandButton value="Nueva Compra" icon="ui-icon-plus"
+				onclick="PF('dlg1').show();" />
+			<p:dialog header="Nuevo Compra" widgetVar="dlg1" minHeight="40">
+				<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="2" >
+					<h:outputText value="Proveedor" />
+					<p:inputText id="rucProveedor"
+						value="#{compraService.rucProveedor}" />
+					<h:outputText value="Cantidad" />
+					<p:inputText id="nuevoCantidad"
+						value="#{compraService.nuevoCantidad}" />
+					<h:outputText value="Codigo Producto" />
+					<p:inputText id="nuevoIdProducto"
+						value="#{compraService.nuevoIdProducto}" />
+					<h:outputText value="Precio Unitario" />
+					<p:inputText id="nuevoPrecio" value="#{compraService.nuevoPrecio}" />
 
-				<p:commandButton value="Agregar Detalle" icon="ui-icon-plus" actionListener="#{compraService.agregar()}" update="form" />
-				<p:commandButton value="Guardar Compra" icon="ui-icon-disk" actionListener="#{compraService.guardarCompra()}" update="form" />
-			</h:panelGrid>
-			<p:dataTable value="#{compraService.detalles}" var="detalle">
-				<p:column headerText="Cantidad">
-					<h:outputText value="#{detalle.cantidad}" />
-				</p:column>
+					<p:commandButton value="Agregar Detalle" icon="ui-icon-plus"
+						actionListener="#{compraService.agregar()}" update="form" />
+					<p:commandButton value="Guardar Compra" icon="ui-icon-disk"
+						actionListener="#{compraService.guardarCompra()}" update="form" />
+				</h:panelGrid>
+				<p:dataTable value="#{compraService.detalles}" var="detalle">
+					<p:column headerText="Cantidad">
+						<h:outputText value="#{detalle.cantidad}" />
+					</p:column>
 
-				<p:column headerText="Producto">
-					<h:outputText value="#{detalle.producto.nombre}" />
-				</p:column>
+					<p:column headerText="Producto">
+						<h:outputText value="#{detalle.producto.nombre}" />
+					</p:column>
 
-				<p:column headerText="Precio Unitario">
-					<h:outputText value="#{detalle.precio}" />
-				</p:column>
-				
-				<p:column headerText="Precio Total">
-					<h:outputText value="#{detalle.precio * detalle.cantidad}" />
-				</p:column>
+					<p:column headerText="Precio Unitario">
+						<h:outputText value="#{detalle.precio}" />
+					</p:column>
 
-			</p:dataTable>
+					<p:column headerText="Precio Total">
+						<h:outputText value="#{detalle.precio * detalle.cantidad}" />
+					</p:column>
+					
+					<p:column headerText="Acciones">
+						<p:commandButton
+						actionListener="#{compraService.remove(detalle)}"
+						icon="ui-icon-close" />
+					</p:column>
+
+				</p:dataTable>
+			</p:dialog>
 		</h:form>
 
 	</ui:define>

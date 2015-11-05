@@ -67,6 +67,16 @@ public class CompraService {
 		} else {
 			System.out.println("No se encontro el producto");
 		}
+		RequestContext context = RequestContext.getCurrentInstance();
+    	context.execute("PF('dlg1').show();");
+    	context.update("form");
+	}
+	
+	public void remove(CompraDetalle d){
+		nuevaCompra.getCompraDetalles().remove(d);
+		RequestContext context = RequestContext.getCurrentInstance();
+    	context.execute("PF('dlg1').show();");
+    	context.update("form");
 	}
 
 	public void guardarCompra() {
