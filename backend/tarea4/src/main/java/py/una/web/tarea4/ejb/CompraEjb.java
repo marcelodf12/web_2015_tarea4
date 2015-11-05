@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import py.una.web.tarea4.model.Cliente;
 import py.una.web.tarea4.model.Compra;
 import py.una.web.tarea4.model.CompraDetalle;
 import py.una.web.tarea4.model.Producto;
@@ -126,52 +127,53 @@ public class CompraEjb {
 
 	@SuppressWarnings("unchecked")
 	public ListaPaginada<Compra> listar(Integer cantidadPorPagina,
-			Integer pagina,	String orderBy, String orderDir, String campoBusqueda,
-			String busqueda) throws Exception {
-		try {
-			String consulta = "";
-			String select = "SELECT id, fecha, monto_total, ruc_proveedor FROM compras ";
-			String contar = "SELECT id, fecha, monto_total, ruc_proveedor FROM compras ";
-			if (campoBusqueda != null) {
-				consulta += "WHERE ";
-				if (campoBusqueda.compareTo("by_all_attributes") == 0) {
-					consulta += "CAST (id AS TEXT) LIKE '" + busqueda
-							+ "%' OR ";
-					consulta += "CAST (monto_total AS TEXT) LIKE '" + busqueda
-							+ "%' OR ";
-					consulta += "ruc_proveedor LIKE '" + busqueda + "%' OR ";
-					consulta += "CAST (fecha AS TEXT) LIKE '" + busqueda
-							+ "%' ";
-				} else {
-					consulta += "CAST (" + campoBusqueda + " AS TEXT) LIKE '"
-							+ busqueda + "%' ";
+			Integer pagina, String orderCol, String orderDir, String campo,
+			String filtro) {
+		if (campo != null)
+			campo = "c." + campo + ".toString()";
+		String query = "SELECT c FROM Compra c ";
+		String contar = "SELECT COUNT(c.id) FROM Compra c ";
+		if (filtro != null && campo != null) {
+			query += " WHERE " + campo + " LIKE '%" + filtro + "%'";
+			contar += " WHERE " + campo + " LIKE '%" + filtro + "%'";
+		} else if (filtro != null) {
+			if (filtro.compareTo("") != 0) {
+				String[] campos = { "c.montoTotal" };
+				query += " WHERE ((c.id = " + filtro + ")";
+				contar += " WHERE ((c.id = " + filtro + ")";
+				for (String c : campos) {
+					query += " OR (" + c + " = " + filtro + ")";
+					contar += " OR (" + c + " = " + filtro + ")";
 				}
+				query += ") ";
+				contar += ") ";
 			}
-			if (orderBy != null) {
-				consulta += " ORDER BY " + orderBy + " " + orderDir + " ";
-			}
-			Query q = em.createNativeQuery(select + consulta, Compra.class);
-			Query q2 = em.createNativeQuery(contar + consulta, Compra.class);
-			
-			q.setFirstResult((pagina - 1) * cantidadPorPagina);
-			q.setMaxResults(cantidadPorPagina);
-
-			ListaPaginada<Compra> respuesta = (new ListaPaginada<Compra>());
-			respuesta.setLista((ArrayList<Compra>) q.getResultList());
-			respuesta.setPaginaActual(pagina);
-
-			Long totalResultados = new Long((int) q2.getResultList().size());
-			Double div = ((double) totalResultados / (double) cantidadPorPagina);
-			Integer cantPag = div.intValue();
-			if (totalResultados % cantidadPorPagina != 0)
-				cantPag++;
-
-			respuesta.setCantidadDePaginas(cantPag);
-
-			return respuesta;
-		} catch (Exception e) {
-			context.setRollbackOnly();
-			throw new Exception(e.getMessage());
 		}
+
+		System.out.println(query);
+
+		if (orderDir != null && orderCol != null) {
+			query += " ORDER BY c." + orderCol + " " + orderDir;
+		}
+
+		Query q = em.createQuery(query, Compra.class);
+		Query q2 = em.createQuery(contar, Long.class);
+
+		q.setFirstResult((pagina - 1) * cantidadPorPagina);
+		q.setMaxResults(cantidadPorPagina);
+
+		ListaPaginada<Compra> respuesta = (new ListaPaginada<Compra>());
+		respuesta.setLista((ArrayList<Compra>) q.getResultList());
+		respuesta.setPaginaActual(pagina);
+
+		Long totalResultados = (Long) q2.getSingleResult();
+		Double div = ((double) totalResultados / (double) cantidadPorPagina);
+		Integer cantPag = div.intValue();
+		if (totalResultados % cantidadPorPagina != 0)
+			cantPag++;
+
+		respuesta.setCantidadDePaginas(cantPag);
+
+		return respuesta;
 	}
 }

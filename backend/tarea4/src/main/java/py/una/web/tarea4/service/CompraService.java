@@ -63,6 +63,8 @@ public class CompraService {
 
 	public List<Compra> getCompras(){
 		try {
+			if(filtroGeneral==null)
+				filtroGeneral = "";
 			ListaPaginada<Compra> l = compraEjb.listar(5, paginaActual, "fecha", orden, null, filtroGeneral);
 			totalPaginas = l.getCantidadDePaginas();
 			return l.getLista();
