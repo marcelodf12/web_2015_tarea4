@@ -26,6 +26,7 @@ import py.una.web.tarea4.ejb.ProveedorEjb;
 import py.una.web.tarea4.model.Compra;
 import py.una.web.tarea4.model.CompraDetalle;
 import py.una.web.tarea4.model.Producto;
+import py.una.web.tarea4.util.ListaPaginada;
 
 @ManagedBean(name = "compraService")
 @ViewScoped
@@ -50,6 +51,30 @@ public class CompraService {
 
 	private Compra nuevaCompra;
 
+	private Integer paginaActual = 1;
+
+	private Integer cantidadPorPagina = 5;
+
+	private String filtroGeneral;
+
+	private String orden = "ASC";
+
+	private Integer totalPaginas;
+
+	public List<Compra> getCompras(){
+		try {
+			if(filtroGeneral==null)
+				filtroGeneral = "";
+			ListaPaginada<Compra> l = compraEjb.listar(5, paginaActual, "fecha", orden, null, filtroGeneral);
+			totalPaginas = l.getCantidadDePaginas();
+			return l.getLista();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public void agregar() {
 		System.out.println("Agregar nuevo detalle");
 		if (nuevaCompra == null) {
@@ -68,15 +93,15 @@ public class CompraService {
 			System.out.println("No se encontro el producto");
 		}
 		RequestContext context = RequestContext.getCurrentInstance();
-    	context.execute("PF('dlg1').show();");
-    	context.update("form");
+		context.execute("PF('dlg1').show();");
+		context.update("form");
 	}
-	
-	public void remove(CompraDetalle d){
+
+	public void remove(CompraDetalle d) {
 		nuevaCompra.getCompraDetalles().remove(d);
 		RequestContext context = RequestContext.getCurrentInstance();
-    	context.execute("PF('dlg1').show();");
-    	context.update("form");
+		context.execute("PF('dlg1').show();");
+		context.update("form");
 	}
 
 	public void guardarCompra() {
@@ -84,8 +109,9 @@ public class CompraService {
 			if (nuevaCompra.getCompraDetalles().size() > 0) {
 				nuevaCompra.setProveedor(proveedorEjb.findById(rucProveedor));
 				nuevaCompra.setMontoTotal(0);
-				for(CompraDetalle c: nuevaCompra.getCompraDetalles()){
-					nuevaCompra.setMontoTotal(nuevaCompra.getMontoTotal() + c.getCantidad()*c.getPrecio());
+				for (CompraDetalle c : nuevaCompra.getCompraDetalles()) {
+					nuevaCompra.setMontoTotal(nuevaCompra.getMontoTotal()
+							+ c.getCantidad() * c.getPrecio());
 				}
 				nuevaCompra.setFecha(new Date());
 				compraEjb.nuevaCompra(nuevaCompra);
@@ -220,6 +246,66 @@ public class CompraService {
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
+	}
+
+	public void primeraPagina() {
+		paginaActual = 1;
+	}
+
+	public void ultimaPagina() {
+		paginaActual = totalPaginas;
+	}
+
+	public void siguientePagina() {
+		if (this.getPaginaActual() < this.getTotalPaginas()) {
+			paginaActual++;
+		}
+	}
+
+	public void anteriorPagina() {
+		if (getPaginaActual() > 1) {
+			paginaActual += -1;
+		}
+	}
+
+	public Integer getPaginaActual() {
+		return paginaActual;
+	}
+
+	public Integer getCantidadPorPagina() {
+		return cantidadPorPagina;
+	}
+
+	public String getFiltroGeneral() {
+		return filtroGeneral;
+	}
+
+	public String getOrden() {
+		return orden;
+	}
+
+	public Integer getTotalPaginas() {
+		return totalPaginas;
+	}
+
+	public void setPaginaActual(Integer paginaActual) {
+		this.paginaActual = paginaActual;
+	}
+
+	public void setCantidadPorPagina(Integer cantidadPorPagina) {
+		this.cantidadPorPagina = cantidadPorPagina;
+	}
+
+	public void setFiltroGeneral(String filtroGeneral) {
+		this.filtroGeneral = filtroGeneral;
+	}
+
+	public void setOrden(String orden) {
+		this.orden = orden;
+	}
+
+	public void setTotalPaginas(Integer totalPaginas) {
+		this.totalPaginas = totalPaginas;
 	}
 
 }

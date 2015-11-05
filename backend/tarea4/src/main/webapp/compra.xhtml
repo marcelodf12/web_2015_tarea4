@@ -39,8 +39,57 @@
 				icon="ui-icon-arrowthickstop-1-n" onclick="PF('dlg3').show();" />
 			<p:commandButton value="Nueva Compra" icon="ui-icon-plus"
 				onclick="PF('dlg1').show();" />
+			<p:separator />
+			<h:panelGrid columns="3" style="margin-bottom:10px" cellpadding="2"
+				columnClasses="label, value">
+				<p:inputText id="filtroGeneral"
+					value="#{compraService.filtroGeneral}" />
+				<p:selectOneListbox id="basic" value="#{compraService.orden}">
+					<f:selectItem itemLabel="Ascendente" itemValue="ASC" />
+					<f:selectItem itemLabel="Descendente" itemValue="DESC" />
+				</p:selectOneListbox>
+				<p:commandButton value="Buscar"
+					actionListener="#{compraService.primeraPagina()}" id="act"
+					title="Buscar" update="form" />
+				<br />
+			</h:panelGrid>		
+			<p:separator />
+			<p:dataTable value="#{compraService.compras}" var="compra">
+				<p:column headerText="Id">
+					<h:outputText value="#{compra.id}" />
+				</p:column>
+
+				<p:column headerText="Fecha">
+					<h:outputText value="#{compra.fecha}" />
+				</p:column>
+
+				<p:column headerText="Monto Total">
+					<h:outputText value="#{compra.montoTotal}" />
+				</p:column>
+
+			</p:dataTable>
+			<br />
+			<center>
+				<p:commandButton value="Primera"
+					actionListener="#{compraService.primeraPagina()}" id="pp"
+					title="Ir a la primera página" update="form" />
+				<p:commandButton value="Anterior"
+					actionListener="#{compraService.anteriorPagina()}" id="pa"
+					title="Página Anterior" update="form" />
+				<h:outputText
+					value=" #{compraService.paginaActual} / #{compraService.totalPaginas} "
+					style="font-weight:bold" update="form" />
+				<p:commandButton value="Siguiente"
+					actionListener="#{compraService.siguientePagina()}" id="ps"
+					title="Siguiente página" update="form" />
+				<p:commandButton value="Ultima"
+					actionListener="#{compraService.ultimaPagina()}" id="pu"
+					title="Ir a la ultima página" update="form" />
+			</center>
+
+
 			<p:dialog header="Nueva Compra" widgetVar="dlg1" minHeight="40">
-				<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="2" >
+				<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="2">
 					<h:outputText value="Proveedor" />
 					<p:inputText id="rucProveedor"
 						value="#{compraService.rucProveedor}" />
@@ -74,11 +123,10 @@
 					<p:column headerText="Precio Total">
 						<h:outputText value="#{detalle.precio * detalle.cantidad}" />
 					</p:column>
-					
+
 					<p:column headerText="Acciones">
-						<p:commandButton
-						actionListener="#{compraService.remove(detalle)}"
-						icon="ui-icon-close" />
+						<p:commandButton actionListener="#{compraService.remove(detalle)}"
+							icon="ui-icon-close" />
 					</p:column>
 
 				</p:dataTable>

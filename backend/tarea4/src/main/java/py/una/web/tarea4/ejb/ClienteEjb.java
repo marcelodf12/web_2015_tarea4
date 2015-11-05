@@ -55,7 +55,7 @@ public class ClienteEjb implements ClienteEjbLocal {
 				numeroDeLinea++;
 				String[] element = line.split(splitBy);
 				Cliente clienteNuevo = new Cliente();
-				
+
 				try {
 					formato = true;
 					if (element[0].compareTo("") != 0
@@ -113,10 +113,10 @@ public class ClienteEjb implements ClienteEjbLocal {
 		}
 		return true;
 	}
-	
+
 	public Boolean persistir(String nombre, String ruc, String direccion) {
 		try {
-			Cliente c = new Cliente(nombre,ruc,direccion); 
+			Cliente c = new Cliente(nombre, ruc, direccion);
 			// en ves de persist
 			em.merge(c);
 		} catch (Exception e) {
@@ -133,8 +133,10 @@ public class ClienteEjb implements ClienteEjbLocal {
 		String query = "SELECT c FROM Cliente c ";
 		String contar = "SELECT COUNT(c.id) FROM Cliente c ";
 		if (filtro != null && campo != null) {
-			query += " WHERE " + campo + " LIKE '%" + filtro + "%' AND activo = true";
-			contar += " WHERE " + campo + " LIKE '%" + filtro + "%' AND activo = true";
+			query += " WHERE " + campo + " LIKE '%" + filtro
+					+ "%' AND activo = true";
+			contar += " WHERE " + campo + " LIKE '%" + filtro
+					+ "%' AND activo = true";
 		} else if (filtro != null) {
 			if (filtro.compareTo("") != 0) {
 				String[] campos = { "ruc", "direccion" };
@@ -146,14 +148,14 @@ public class ClienteEjb implements ClienteEjbLocal {
 				}
 				query += ") AND activo = true";
 				contar += ") AND activo = true";
-			}else{
+			} else {
 				query += " WHERE activo = true";
 				contar += " WHERE activo = true";
 			}
 		}
-		
+
 		System.out.println(query);
-		
+
 		if (orderDir != null && orderCol != null) {
 			query += " ORDER BY c." + orderCol + " " + orderDir;
 		}
@@ -177,9 +179,9 @@ public class ClienteEjb implements ClienteEjbLocal {
 		respuesta.setCantidadDePaginas(cantPag);
 
 		return respuesta;
-	};
+	}
 
-	public void eliminar(String ruc){
+	public void eliminar(String ruc) {
 		try {
 			Cliente c = em.find(Cliente.class, ruc);
 			c.setActivo(false);
@@ -188,8 +190,8 @@ public class ClienteEjb implements ClienteEjbLocal {
 			// TODO: handle exception
 		}
 	}
-	
-	public Cliente findById(String ruc){
+
+	public Cliente findById(String ruc) {
 		try {
 			return em.find(Cliente.class, ruc);
 		} catch (Exception e) {

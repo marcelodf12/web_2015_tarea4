@@ -27,6 +27,7 @@ public class SolicitudCompraEjb {
 	@Resource
     private SessionContext context;
 	
+	@SuppressWarnings("unchecked")
 	public List<SolicitudCompra> listar() throws Exception{
 		try{
 			Query q= em.createNativeQuery("SELECT * FROM SOLICITUDCOMPRAS", SolicitudCompra.class);
