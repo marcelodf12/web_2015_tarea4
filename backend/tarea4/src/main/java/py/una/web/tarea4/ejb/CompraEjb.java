@@ -14,6 +14,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import py.una.web.tarea4.model.Compra;
 import py.una.web.tarea4.model.CompraDetalle;
@@ -21,6 +22,7 @@ import py.una.web.tarea4.model.Producto;
 import py.una.web.tarea4.model.Proveedor;
 import py.una.web.tarea4.util.CompraDetalleJson;
 import py.una.web.tarea4.util.CompraJson;
+import py.una.web.tarea4.util.ListaPaginada;
 
 import com.google.gson.Gson;
 
@@ -122,4 +124,54 @@ public class CompraEjb {
 		return errores;
 	}
 
+	@SuppressWarnings("unchecked")
+	public ListaPaginada<Compra> listar(Integer cantidadPorPagina,
+			Integer pagina,	String orderBy, String orderDir, String campoBusqueda,
+			String busqueda) throws Exception {
+		try {
+			String consulta = "";
+			String select = "SELECT id, fecha, monto_total, ruc_proveedor FROM compras ";
+			String contar = "SELECT id, fecha, monto_total, ruc_proveedor FROM compras ";
+			if (campoBusqueda != null) {
+				consulta += "WHERE ";
+				if (campoBusqueda.compareTo("by_all_attributes") == 0) {
+					consulta += "CAST (id AS TEXT) LIKE '" + busqueda
+							+ "%' OR ";
+					consulta += "CAST (monto_total AS TEXT) LIKE '" + busqueda
+							+ "%' OR ";
+					consulta += "ruc_proveedor LIKE '" + busqueda + "%' OR ";
+					consulta += "CAST (fecha AS TEXT) LIKE '" + busqueda
+							+ "%' ";
+				} else {
+					consulta += "CAST (" + campoBusqueda + " AS TEXT) LIKE '"
+							+ busqueda + "%' ";
+				}
+			}
+			if (orderBy != null) {
+				consulta += " ORDER BY " + orderBy + " " + orderDir + " ";
+			}
+			Query q = em.createNativeQuery(select + consulta, Compra.class);
+			Query q2 = em.createNativeQuery(contar + consulta, Compra.class);
+			
+			q.setFirstResult((pagina - 1) * cantidadPorPagina);
+			q.setMaxResults(cantidadPorPagina);
+
+			ListaPaginada<Compra> respuesta = (new ListaPaginada<Compra>());
+			respuesta.setLista((ArrayList<Compra>) q.getResultList());
+			respuesta.setPaginaActual(pagina);
+
+			Long totalResultados = new Long((int) q2.getResultList().size());
+			Double div = ((double) totalResultados / (double) cantidadPorPagina);
+			Integer cantPag = div.intValue();
+			if (totalResultados % cantidadPorPagina != 0)
+				cantPag++;
+
+			respuesta.setCantidadDePaginas(cantPag);
+
+			return respuesta;
+		} catch (Exception e) {
+			context.setRollbackOnly();
+			throw new Exception(e.getMessage());
+		}
+	}
 }
